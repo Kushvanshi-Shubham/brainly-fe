@@ -1,0 +1,1 @@
+export const BACKEND_URL = "https://brainly-be-56wv.onrender.com"
