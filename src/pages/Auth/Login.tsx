@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export function Login() {
-  const usernameRef = useRef<HTMLInputElement>();
-  const passwordRef = useRef<HTMLInputElement>();
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
