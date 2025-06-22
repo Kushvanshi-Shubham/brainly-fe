@@ -1,7 +1,7 @@
-import { ShareIcon } from "../../Icons/ShareIcon";
 import axios from "axios";
 import { BACKEND_URL } from "../../config";
-import { DeleteIcon } from "../../Icons/DeleteIcon";
+import { DeleteIcon, ShareIcon } from "../../Icons/IconsImport";
+
 
 interface CardProps {
   contentId?: string;

@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import { CrossIcon } from "../../Icons/CrossIcon";
 import { Button } from "./button";
 import { Input } from "./Input";
 import axios from "axios";
 import { BACKEND_URL } from "../../config";
 import { motion } from "framer-motion";
+import { CrossIcon } from "../../Icons/IconsImport";
 
 enum ContentType {
   Youtube = "youtube",

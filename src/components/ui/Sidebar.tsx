@@ -1,6 +1,4 @@
-import { Logo } from "../../Icons/logo";
-import { TwitterIcon } from "../../Icons/TwitterIcon";
-import { YoutubeIcon } from "../../Icons/YoutubeIcon";
+import { Logo, TwitterIcon, YoutubeIcon } from "../../Icons/IconsImport";
 import { SidebarItem } from "./SiderbarItem";
 
 export function Sidebar() {
@@ -16,7 +14,7 @@ export function Sidebar() {
 
       
       <div className="mt-10 space-y-4 text-lg text-gray-700 dark:text-gray-300">
-        <SidebarItem text="Twitter" icon={<TwitterIcon />} />
+        <SidebarItem text="Twitter" icon={<TwitterIcon/>} />
         <SidebarItem text="Youtube" icon={<YoutubeIcon />} />
       </div>
     </div>

@@ -3,11 +3,10 @@ import "../App.css";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/Card";
 import { CreateContentModal } from "../components/ui/CreateContent";
-import { PlusIcon } from "../Icons/PlusIcon";
-import { ShareIcon } from "../Icons/ShareIcon";
 import { Sidebar } from "../components/ui/Sidebar";
 import { useContent } from "../hooks/useContent";
 import { motion } from "framer-motion";
+import { PlusIcon, ShareIcon } from "../Icons/IconsImport";
 
 function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
