@@ -12,7 +12,8 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { cn } from "../utlis/cn";
 import { CreateContentModal } from "../components/ui/CreateContent";
 import { UserMenu } from "../components/ui/UserMenu";
-import { ShareLink } from "../components/ui/ShareLink";
+import { ShareLink } from "../components/ui/shareLink";
+
 
 function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
