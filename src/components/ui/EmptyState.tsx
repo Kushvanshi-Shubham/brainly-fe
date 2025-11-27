@@ -2,7 +2,7 @@ import { Button } from "./button.tsx";
 import { motion } from "framer-motion";
 
 interface EmptyStateProps {
-  onAdd: () => void;
+  onAdd?: () => void;
 }
 
 export function EmptyState({ onAdd }: EmptyStateProps) {
@@ -32,12 +32,14 @@ export function EmptyState({ onAdd }: EmptyStateProps) {
       <p className="mb-6 text-lg text-center font-medium text-gray-700 dark:text-gray-300">
         Your content list is empty.
       </p>
-      <Button
-        variant="primary"
-        text="Add Your First Item"
-        onClick={onAdd}
-        size="lg"
-      />
+      {onAdd && (
+        <Button
+          variant="primary"
+          text="Add Your First Item"
+          onClick={onAdd}
+          size="lg"
+        />
+      )}
     </motion.div>
   );
 }

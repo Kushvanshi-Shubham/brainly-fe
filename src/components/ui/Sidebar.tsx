@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-import { Logo, TwitterIcon, UserIcon, YoutubeIcon } from "../../Icons/IconsImport";
+import { Logo, UserIcon, ArchiveIcon, SearchIcon } from "../../Icons/IconsImport";
 import { cn } from "../../utlis/cn";
 import { SideToggle } from "../../Icons/IconsDesign/SiderbarToggle";
 
 import { SidebarItem } from "./SiderbarItem";
 
 interface SidebarProps {
-  collapsed: boolean;
-  setCollapsed: (val: boolean) => void;
+  readonly collapsed: boolean;
+  readonly setCollapsed: (collapsed: boolean) => void;
 }
 
 export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
@@ -21,7 +21,7 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
     >
       {/* Header Section */}
       <div className="flex items-center justify-between py-4 mb-8 h-16">
-        <Link to="/" className="flex items-center gap-2 text-2xl font-semibold text-purple-600 dark:text-purple-400">
+        <Link to="/feed" className="flex items-center gap-2 text-2xl font-semibold text-purple-600 dark:text-purple-400">
           <Logo className="w-8 h-8 flex-shrink-0" />
           {!collapsed && <span className="whitespace-nowrap transition-opacity duration-300">Brainly</span>}
         </Link>
@@ -38,21 +38,27 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
       {/* Navigation Section */}
       <nav className="flex-grow space-y-2 text-gray-700 dark:text-gray-300 text-base">
         <SidebarItem
+          text="Feed"
+          icon={<span className="text-xl">🏠</span>}
+          to="/feed"
+          collapsed={collapsed}
+        />
+        <SidebarItem
+          text="Dashboard"
+          icon={<ArchiveIcon className="w-5 h-5" />}
+          to="/dashboard"
+          collapsed={collapsed}
+        />
+        <SidebarItem
+          text="Explore"
+          icon={<SearchIcon className="w-5 h-5" />}
+          to="/explore"
+          collapsed={collapsed}
+        />
+        <SidebarItem
           text="Profile"
           icon={<UserIcon className="w-5 h-5" />}
           to="/profile"
-          collapsed={collapsed}
-        />
-        <SidebarItem
-          text="Twitter"
-          icon={<TwitterIcon className="w-5 h-5" />}
-          to="/twitter"
-          collapsed={collapsed}
-        />
-        <SidebarItem
-          text="Youtube"
-          icon={<YoutubeIcon className="w-5 h-5" />}
-          to="/youtube"
           collapsed={collapsed}
         />
       </nav>

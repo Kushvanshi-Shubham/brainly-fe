@@ -8,7 +8,9 @@ interface ContentItem {
   type: string;
   title: string;
   link: string;
-  
+  tags?: Array<{ _id: string; name: string }>;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 

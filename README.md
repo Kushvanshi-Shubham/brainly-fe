@@ -1,54 +1,122 @@
-# React + TypeScript + Vite
+# Brainly Frontend 🎨
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive React frontend for the Brainly content management platform. Built with React 19, TypeScript, Vite, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Beautiful UI** - Modern, clean interface with dark mode support
+- **Smooth Animations** - Framer Motion for delightful interactions
+- **Responsive Design** - Works perfectly on all devices
+- **Fast Performance** - Built with Vite for lightning-fast builds
+- **Type Safe** - Fully typed with TypeScript
+- **Smart Search** - Debounced search with instant filtering
+- **Content Management** - Save, organize, and share your content
+- **Tag System** - Organize content with custom tags
+- **Share Collections** - Generate shareable links
+- **🆕 Discovery Feed** - Analytics dashboard with content insights, rediscovery features, and "on this day" memories
 
-## Expanding the ESLint configuration
+## 📋 Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js >= 18.x
+- npm or yarn
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🛠️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd brainly-fe
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env`:
+   ```env
+   VITE_BACKEND_URL=http://localhost:3000
+   ```
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+   The app will be available at `http://localhost:5173`
+
+## 🚀 Build for Production
+
+```bash
+# Build the project
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📁 Project Structure
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
 ```
+brainly-fe/
+├── src/
+│   ├── components/ui/     # Reusable UI components
+│   ├── context/           # React context
+│   ├── hooks/             # Custom React hooks
+│   ├── Icons/             # Icon components
+│   ├── Landing/           # Landing page components
+│   ├── Layouts/           # Layout components
+│   ├── pages/             # Page components
+│   ├── utlis/             # Utility functions
+│   ├── App.tsx
+│   └── config.ts
+├── public/
+└── package.json
+```
+
+## 🎨 Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS 4
+- Framer Motion
+- React Router v7
+- Axios
+- React Hot Toast
+
+## 🎯 Key Features
+
+- Landing page with hero and features
+- Dashboard with grid layout
+- Content management (add, delete, filter)
+- Dark mode support
+- Protected routes
+- Shareable collections
+
+## 📝 Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+```
+
+## 🌐 Deployment
+
+Configured for Vercel deployment. See `vercel.json` for configuration.
+
+## 👤 Author
+
+**Kushvanshi Shubham**
+- GitHub: [@Kushvanshi-Shubham](https://github.com/Kushvanshi-Shubham)
+
+---
+
+Made with ❤️ using React + TypeScript + Vite

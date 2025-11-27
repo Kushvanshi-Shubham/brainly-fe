@@ -1,7 +1,18 @@
 import { LandingNavbar , HeroSection, FeaturesSection, IconMarquee } from "../Landing";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export function LandingPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/feed", { replace: true });
+    }
+  }, [navigate]);
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       <LandingNavbar />

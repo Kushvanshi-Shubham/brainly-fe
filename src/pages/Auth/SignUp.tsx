@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { Input } from "../../components/ui/Input";
@@ -7,7 +7,19 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Button } from "../../components/ui/button.tsx";
 
+function isPasswordStrong(password: string) {
+  return (
+    password.length >= 8 &&
+    /\d/.test(password) &&
+    /[a-zA-Z]/.test(password) &&
+    /[^a-zA-Z0-9]/.test(password) &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password)
+  );
+}
+
 export function SignUp() {
+  const usernameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
@@ -16,26 +28,28 @@ export function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  function isPasswordStrong(password: string) {
-    return (
-      password.length >= 8 &&
-      /[0-9]/.test(password) &&
-      /[a-zA-Z]/.test(password) &&
-      /[^a-zA-Z0-9]/.test(password) &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password)
-    );
-  }
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/feed", { replace: true });
+    }
+  }, [navigate]);
 
   async function handleSignup(event: React.FormEvent) {
     event.preventDefault();
 
+    const username = usernameRef.current?.value.trim();
     const email = emailRef.current?.value.trim();
     const password = passwordRef.current?.value.trim();
     const confirmPassword = confirmPasswordRef.current?.value.trim();
 
-    if (!email || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
       toast.error("All fields are required.");
+      return;
+    }
+
+    if (username.length < 3) {
+      toast.error("Username must be at least 3 characters.");
       return;
     }
 
@@ -54,7 +68,8 @@ export function SignUp() {
     setLoading(true);
     try {
       await axios.post(BACKEND_URL + "/api/v1/signup", {
-        username: email,
+        username,
+        email,
         password,
       });
 
@@ -94,6 +109,9 @@ export function SignUp() {
         </motion.h2>
 
         <form onSubmit={handleSignup}>
+          <div className="mb-4">
+            <Input ref={usernameRef} placeholder="Username" type="text" />
+          </div>
           <div className="mb-4">
             <Input ref={emailRef} placeholder="Email" type="email" />
           </div>

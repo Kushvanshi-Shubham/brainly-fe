@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import { Input } from "../../components/ui/Input";
 import { BACKEND_URL } from "../../config";
@@ -9,38 +9,45 @@ import toast from "react-hot-toast";
 import { Button } from "../../components/ui/button.tsx";
 
 export function Login() {
-  const emailRef = useRef<HTMLInputElement>(null);
+  const usernameOrEmailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/feed", { replace: true });
+    }
+  }, [navigate]);
+
   async function handleLogin(event: React.FormEvent) {
     event.preventDefault();
 
-    const email = emailRef.current?.value.trim();
+    const usernameOrEmail = usernameOrEmailRef.current?.value.trim();
     const password = passwordRef.current?.value.trim();
 
-    if (!email || !password) {
-      toast.error("Please enter both email and password.");
+    if (!usernameOrEmail || !password) {
+      toast.error("Please enter both username/email and password.");
       return;
     }
 
     setLoading(true);
     try {
       const response = await axios.post(BACKEND_URL + "/api/v1/login", {
-        username: email,
+        usernameOrEmail,
         password,
       });
 
       const jwt = response.data.token;
       localStorage.setItem("token", jwt);
       toast.success("Login successful!");
-      navigate("/dashboard");
+      navigate("/feed");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         if (error.response.status === 401 || error.response.status === 403) {
-          toast.error("Invalid email or password.");
+          toast.error("Invalid username/email or password.");
         } else {
           toast.error("An unexpected error occurred. Please try again later.");
         }
@@ -67,7 +74,11 @@ export function Login() {
 
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <Input ref={emailRef} placeholder="Email" type="email" />
+            <Input 
+              ref={usernameOrEmailRef} 
+              placeholder="Username or Email" 
+              type="text" 
+            />
           </div>
           <div className="mb-2">
             <Input

@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import { logout } from "../../utlis/logout";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserIcon, LogOutIcon, ChevronDownIcon } from "../../Icons/IconsImport"; 
+import { BACKEND_URL } from "../../config";
+import { Avatar } from "./Avatar";
 
 function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () => void) {
   useEffect(() => {
@@ -23,8 +26,44 @@ function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () =
 
 export const UserMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [username, setUsername] = useState("User");
+  const [profilePic, setProfilePic] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch user data on mount and when returning from profile page
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          const response = await axios.get(`${BACKEND_URL}/api/v1/profile`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUsername(response.data.username);
+          setProfilePic(response.data.profilePic);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+    
+    fetchUserData();
+    
+    // Listen for profile update events
+    const handleProfileUpdate = () => {
+      fetchUserData();
+    };
+    
+    globalThis.addEventListener('profileUpdated', handleProfileUpdate);
+    
+    return () => {
+      globalThis.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
+  }, [location.pathname]); // Refetch when route changes
 
   // Use the custom hook to close the menu
   useClickOutside(menuRef, () => setIsOpen(false));
@@ -47,10 +86,10 @@ export const UserMenu = () => {
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <img
-          src={`https://api.dicebear.com/7.x/initials/svg?seed=User&backgroundColor=a855f7,8b5cf6,ec4899&backgroundType=gradientLinear&radius=50`}
-          alt="User Avatar"
-          className="w-8 h-8 rounded-full object-cover"
+        <Avatar 
+          profilePic={profilePic}
+          username={username}
+          size="sm"
         />
         <ChevronDownIcon className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
