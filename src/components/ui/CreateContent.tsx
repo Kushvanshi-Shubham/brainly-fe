@@ -6,19 +6,8 @@ import { BACKEND_URL } from "../../config";
 import { motion, AnimatePresence } from "framer-motion";
 import { CrossIcon } from "../../Icons/IconsImport";
 import toast from "react-hot-toast";
-
-
-declare global {
-  interface Window {
-  }
-}
-
-enum ContentType {
-  Youtube = "youtube",
-  Twitter = "twitter",
-  Article = "article",
-  Other = "other",
-}
+import { detectContentType, type ContentType } from "../../utlis/contentTypeDetection";
+import { triggerContentUpdate } from "../../utlis/events";
 
 interface CreateContentModalProps {
   open: boolean;
@@ -30,17 +19,25 @@ export function CreateContentModal({ open, onClose, refreshContent }: CreateCont
   const titleRef = useRef<HTMLInputElement>(null);
   const linkRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
-  const [type, setType] = useState<ContentType>(ContentType.Article);
+  const [type, setType] = useState<ContentType>('article');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const resetForm = useCallback(() => {
     if (titleRef.current) titleRef.current.value = "";
     if (linkRef.current) linkRef.current.value = "";
-    setType(ContentType.Article);
+    setType('article');
     setLoading(false);
     setError(null);
   }, []);
+  
+  // Auto-detect content type from URL
+  const handleLinkChange = (url: string) => {
+    if (url) {
+      const detectedType = detectContentType(url);
+      setType(detectedType);
+    }
+  };
 
   useEffect(() => {
     if (open) {
@@ -98,6 +95,7 @@ export function CreateContentModal({ open, onClose, refreshContent }: CreateCont
         }
       );
       toast.success("Content added successfully!");
+      triggerContentUpdate(); // Trigger instant refresh across all components
       refreshContent(); 
       onClose();
     } catch (err) {
@@ -155,24 +153,42 @@ export function CreateContentModal({ open, onClose, refreshContent }: CreateCont
 
             <div className="space-y-4">
               <Input ref={titleRef} placeholder={"Title"} />
-              <Input ref={linkRef} placeholder={"Link"} />
+              <Input 
+                ref={linkRef} 
+                placeholder={"Link"} 
+                onChange={(e) => handleLinkChange(e.target.value)}
+              />
             </div>
 
             <div className="my-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Content Type
+                Content Type {type && <span className="text-purple-600 dark:text-purple-400">(Auto-detected: {type})</span>}
               </label>
-              <div className="grid grid-cols-2 gap-3">
-                {Object.values(ContentType).map((contentType) => (
-                  <Button
-                    key={contentType}
-                    text={contentType.charAt(0).toUpperCase() + contentType.slice(1)}
-                    size="sm"
-                    variant={type === contentType ? "primary" : "secondary"}
-                    onClick={() => setType(contentType)}
-                  />
-                ))}
-              </div>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value as ContentType)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
+              >
+                <option value="youtube">YouTube</option>
+                <option value="twitter">Twitter / X</option>
+                <option value="instagram">Instagram</option>
+                <option value="tiktok">TikTok</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="reddit">Reddit</option>
+                <option value="medium">Medium</option>
+                <option value="github">GitHub</option>
+                <option value="codepen">CodePen</option>
+                <option value="spotify">Spotify</option>
+                <option value="soundcloud">SoundCloud</option>
+                <option value="vimeo">Vimeo</option>
+                <option value="twitch">Twitch</option>
+                <option value="facebook">Facebook</option>
+                <option value="pinterest">Pinterest</option>
+                <option value="article">Article</option>
+                <option value="video">Video</option>
+                <option value="resource">Resource</option>
+                <option value="other">Other</option>
+              </select>
             </div>
 
             <div className="flex justify-end">

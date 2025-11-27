@@ -16,6 +16,8 @@ import { SearchIcon } from "./IconsDesign/SearchIcon";
 import { MoonIcon } from "./IconsDesign/MoonIcon";
 import { SunIcon } from "./IconsDesign/SunIcon";
 import { ChevronDownIcon } from "./IconsDesign/ChevronDownIcon";
+import { EditIcon } from "./IconsDesign/EditIcon";
+import { StarIcon } from "./IconsDesign/StarIcon";
 
 export {
   CrossIcon,
@@ -36,4 +38,6 @@ export {
   MoonIcon,
   SunIcon,
   ChevronDownIcon,
+  EditIcon,
+  StarIcon,
 };

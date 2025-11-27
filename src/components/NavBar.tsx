@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
-import { Logo, PlusIcon } from "../Icons/IconsImport";
+import { Link, useNavigate } from "react-router-dom";
+import { Logo, PlusIcon, SearchIcon } from "../Icons/IconsImport";
 import { ThemeToggle } from "./ui/ThemeToggle";
 import { UserMenu } from "./ui/UserMenu";
 import { useTheme } from "../hooks/useThemes";
 import { Button } from "./ui/button.tsx";
+import { useState } from "react";
 
 interface NavbarProps {
   onAddContent: () => void;
@@ -11,6 +12,18 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onAddContent }) => {
   const { isDark, toggleTheme } = useTheme();
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/explore?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+      setShowSearch(false);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-white/80 px-4 shadow-sm backdrop-blur-sm dark:bg-gray-900/80 dark:border-gray-800">
@@ -43,8 +56,31 @@ export const Navbar: React.FC<NavbarProps> = ({ onAddContent }) => {
         </nav>
       </div>
 
+      {/* Search Bar */}
+      {showSearch ? (
+        <form onSubmit={handleSearch} className="flex-1 max-w-md mx-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search content..."
+            autoFocus
+            onBlur={() => !searchQuery && setShowSearch(false)}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
+          />
+        </form>
+      ) : null}
      
       <div className="flex items-center gap-4">
+        {!showSearch && (
+          <button
+            onClick={() => setShowSearch(true)}
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            title="Search"
+          >
+            <SearchIcon className="h-5 w-5" />
+          </button>
+        )}
         <Button
           variant="primary"
           size="sm"

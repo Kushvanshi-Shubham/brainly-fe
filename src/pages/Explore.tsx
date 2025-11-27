@@ -6,7 +6,7 @@ import { BACKEND_URL } from "../config";
 import { Spinner } from "../components/ui/Spinner";
 import { SearchIcon, CalendarIcon, ShareIcon } from "../Icons/IconsImport";
 import type { Content, DiscoveryData, SearchFilters } from "../types";
-import { getTypeColor, getTypeEmoji } from "../utlis/helpers";
+import { getPlatformMeta, type ContentType } from "../utlis/contentTypeDetection";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState<"discover" | "search">("discover");
@@ -232,8 +232,8 @@ const Explore = () => {
                           >
                             {discoveryData.randomItem.link}
                           </a>
-                          <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold ${getTypeColor(discoveryData.randomItem.type)}`}>
-                            {getTypeEmoji(discoveryData.randomItem.type)} {discoveryData.randomItem.type}
+                          <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: getPlatformMeta(discoveryData.randomItem.type as ContentType).color }}>
+                            {getPlatformMeta(discoveryData.randomItem.type as ContentType).icon} {discoveryData.randomItem.type}
                           </span>
                         </div>
                       ) : (
@@ -258,7 +258,7 @@ const Explore = () => {
                           key={item._id}
                           className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center"
                         >
-                          <div className="text-3xl mb-2">{getTypeEmoji(item._id)}</div>
+                          <div className="text-3xl mb-2">{getPlatformMeta(item._id as ContentType).icon}</div>
                           <div className="text-2xl font-bold text-gray-900 dark:text-white">
                             {item.count}
                           </div>
@@ -309,7 +309,7 @@ const Explore = () => {
                             key={item._id}
                             className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                           >
-                            <div className="text-2xl">{getTypeEmoji(item.type)}</div>
+                            <div className="text-2xl">{getPlatformMeta(item.type as ContentType).icon}</div>
                             <div className="flex-1">
                               <h4 className="font-medium text-gray-900 dark:text-white line-clamp-1">
                                 {item.title}
@@ -323,7 +323,7 @@ const Explore = () => {
                                 {item.link}
                               </a>
                               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                {new Date(item.createdAt).getFullYear()}
+                                {new Date(item.createdAt || Date.now()).getFullYear()}
                               </p>
                             </div>
                           </div>
@@ -462,8 +462,8 @@ const Explore = () => {
                       >
                         <div className="p-6">
                           <div className="flex items-start justify-between mb-3">
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getTypeColor(item.type)}`}>
-                              {getTypeEmoji(item.type)} {item.type}
+                            <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: getPlatformMeta(item.type as ContentType).color }}>
+                              {getPlatformMeta(item.type as ContentType).icon} {item.type}
                             </span>
                           </div>
                           <h3 className="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
@@ -497,7 +497,7 @@ const Explore = () => {
                           )}
                           <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                             <CalendarIcon className="w-4 h-4" />
-                            {new Date(item.createdAt).toLocaleDateString()}
+                            {new Date(item.createdAt || Date.now()).toLocaleDateString()}
                           </div>
                         </div>
                       </motion.div>

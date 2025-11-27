@@ -8,7 +8,7 @@ import { BACKEND_URL } from "../../config";
 import { logout } from "../../utlis/logout";
 import { Avatar } from "../../components/ui/Avatar";
 import type { ProfileData } from "../../types";
-import { getTypeColor, getTypeEmoji } from "../../utlis/helpers";
+import { getPlatformMeta, type ContentType } from "../../utlis/contentTypeDetection";
 
 export default function Profile() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -297,10 +297,12 @@ export default function Profile() {
             </h2>
             <div className="space-y-3">
               {profile?.typeBreakdown && profile.typeBreakdown.length > 0 ? (
-                profile.typeBreakdown.map((item, index) => (
+                profile.typeBreakdown.map((item, index) => {
+                  const platformMeta = getPlatformMeta(item._id as ContentType);
+                  return (
                   <div key={item._id || index} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">{getTypeEmoji(item._id)}</span>
+                      <span className="text-2xl">{platformMeta.icon}</span>
                       <span className="font-medium text-gray-700 dark:text-gray-300 capitalize">
                         {item._id}
                       </span>
@@ -317,7 +319,8 @@ export default function Profile() {
                       </span>
                     </div>
                   </div>
-                ))
+                  );
+                })
               ) : (
                 <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                   No content types yet
@@ -369,20 +372,28 @@ export default function Profile() {
             </h2>
             <div className="space-y-4">
               {profile?.recentActivity && profile.recentActivity.length > 0 ? (
-                profile.recentActivity.map((item) => (
+                profile.recentActivity.map((item) => {
+                  const platformMeta = getPlatformMeta(item.type as ContentType);
+                  return (
                   <div
                     key={item._id}
                     className="flex items-start gap-4 pb-4 border-b border-gray-200 dark:border-gray-700 last:border-0"
                   >
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
-                      {getTypeEmoji(item.type)}
+                    <div 
+                      className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                      style={{ backgroundColor: platformMeta.color }}
+                    >
+                      {platformMeta.icon}
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-1">
                         {item.title}
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${getTypeColor(item.type)}`}>
+                        <span 
+                          className="px-2 py-0.5 rounded text-xs font-medium text-white"
+                          style={{ backgroundColor: platformMeta.color }}
+                        >
                           {item.type}
                         </span>
                         <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -391,7 +402,8 @@ export default function Profile() {
                       </div>
                     </div>
                   </div>
-                ))
+                  );
+                })
               ) : (
                 <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                   No recent activity

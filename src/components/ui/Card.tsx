@@ -1,57 +1,39 @@
 import axios from "axios";
 import { BACKEND_URL } from "../../config";
-import { DeleteIcon, ShareIcon } from "../../Icons/IconsImport";
-import { useEffect, useState } from "react";
+import { DeleteIcon, ShareIcon, EditIcon, StarIcon, ArchiveIcon } from "../../Icons/IconsImport";
+import { useState, memo, lazy, Suspense } from "react";
 import toast from "react-hot-toast";
 import { Button } from "./button";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./Dialog";
+import { EmbedPreview } from "./EmbedPreview";
+import { getPlatformMeta, type ContentType } from "../../utlis/contentTypeDetection";
+import type { Content } from "../../types";
+import { triggerContentUpdate } from "../../utlis/events";
+import { Spinner } from "./Spinner";
 
-
-declare global {
-  interface Window {
-    twttr?: {
-      widgets: {
-        load: (element?: HTMLElement) => void;
-      };
-    };
-  }
-}
+// Lazy load EditContentModal for better performance
+const EditContentModal = lazy(() => 
+  import("./EditContentModal").then(module => ({ 
+    default: module.EditContentModal 
+  }))
+);
 
 interface CardProps {
-  contentId: string;
-  title: string;
-  link: string;
-  type: string;
+  content: Content;
   refresh: () => void;
 }
 
-export function Card({ contentId, title, link, type, refresh }: CardProps) {
+const CardComponent = ({ content, refresh }: CardProps) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(content.isFavorite || false);
+  const [isArchived, setIsArchived] = useState(content.isArchived || false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-
-  useEffect(() => {
-    if (type === "twitter" && window.twttr) {
-      window.twttr.widgets.load();
-    }
-  }, [type]);
-
-
-
-  const getEmbedLink = () => {
-    if (type === "youtube") {
-      const videoIdMatch = link.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|v\/|)([\w-]{11})/);
-      return videoIdMatch ? `https://www.youtube.com/embed/${videoIdMatch[1]}` : null;
-    }
- 
-    if (type === "twitter") {
-      return link;
-    }
-    return null; 
-  };
-
-  const embedLink = getEmbedLink();
+  const { _id: contentId, title, link, type, notes } = content;
+  const platformMeta = getPlatformMeta(type as ContentType);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -65,12 +47,12 @@ export function Card({ contentId, title, link, type, refresh }: CardProps) {
 
       await axios.delete(`${BACKEND_URL}/api/v1/content/${contentId}`, {
         headers: {
-         
           Authorization: `Bearer ${token}`,
         },
       });
 
       toast.success("Content deleted successfully!");
+      triggerContentUpdate(); // Instant refresh across app
       refresh();
       setShowConfirmModal(false);
     } catch (err) {
@@ -81,54 +63,171 @@ export function Card({ contentId, title, link, type, refresh }: CardProps) {
     }
   };
 
+  const toggleFavorite = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `${BACKEND_URL}/api/v1/content/${contentId}/favorite`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setIsFavorite(!isFavorite);
+      toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
+      triggerContentUpdate(); // Instant refresh
+      refresh();
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+      toast.error("Failed to update favorite status");
+    }
+  };
+
+  const toggleArchive = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `${BACKEND_URL}/api/v1/content/${contentId}/archive`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setIsArchived(!isArchived);
+      toast.success(isArchived ? "Unarchived" : "Archived");
+      triggerContentUpdate(); // Instant refresh
+      refresh();
+    } catch (error) {
+      console.error("Failed to toggle archive:", error);
+      toast.error("Failed to update archive status");
+    }
+  };
+
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      whileHover={{ y: -4 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-md w-full max-w-sm flex flex-col h-full"
+      className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border border-gray-200 dark:border-gray-700"
     >
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">
-          {type}
-        </span>
-        <div className="flex gap-2 items-center">
-          <a href={link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-purple-500 dark:hover:text-purple-300 transition-colors" title="Open Link">
-            <ShareIcon className="w-5 h-5" />
-          </a>
-          <button onClick={() => setShowConfirmModal(true)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors" title="Delete Content" disabled={isDeleting}>
-            <DeleteIcon className="w-5 h-5" />
-          </button>
-        </div>
+      {/* Embed preview - Full width at top */}
+      <div className="w-full">
+        <EmbedPreview url={link} type={type as ContentType} title={title} />
       </div>
 
-      <h3 className="text-lg font-bold text-gray-800 dark:text-white line-clamp-2 mb-3 flex-grow">
-        {title}
-      </h3>
-
-      <div className="rounded overflow-hidden mt-auto">
-        {type === "youtube" && embedLink && (
-          <div className="aspect-video w-full bg-gray-200 dark:bg-gray-700">
-            <iframe className="w-full h-full rounded" src={embedLink} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+      {/* Content section */}
+      <div className="p-5">
+        {/* Header with platform badge and title */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-2xl">{platformMeta.icon}</span>
+            <span 
+              className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full"
+              style={{ 
+                backgroundColor: platformMeta.color + '20',
+                color: platformMeta.color 
+              }}
+            >
+              {type}
+            </span>
+            {isFavorite && <span className="text-yellow-500 text-lg">★</span>}
+            {isArchived && <span className="text-purple-500 text-lg">📦</span>}
           </div>
-        )}
 
-        {type === "twitter" && embedLink && (
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2">
+            {title}
+          </h3>
           
-          <div className="w-full min-h-[150px]">
-            <blockquote className="twitter-tweet" data-theme="dark">
-              <a href={embedLink}>Loading Tweet...</a>
-            </blockquote>
+          <a 
+            href={link} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 line-clamp-1 hover:underline"
+          >
+            {link}
+          </a>
+        </div>
+        
+        {/* Notes section */}
+        {notes && (
+          <div className="mb-4 p-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-850 rounded-lg border border-purple-200 dark:border-gray-700">
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              <span className="font-semibold text-purple-700 dark:text-purple-400">💭 Note:</span> {notes}
+            </p>
           </div>
         )}
 
-        {!embedLink && (
-          <a href={link} target="_blank" rel="noopener noreferrer" className="block w-full h-32 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center text-gray-600 dark:text-gray-400 text-center hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-            <span className="line-clamp-2 p-2 font-medium">Click to open: {link}</span>
-          </a>
+        {/* Tags */}
+        {content.tags && content.tags.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {content.tags.slice(0, isExpanded ? content.tags.length : 5).map((tag, index) => (
+              <span
+                key={`${typeof tag === 'string' ? tag : tag.name}-${index}`}
+                className="px-3 py-1.5 text-xs font-semibold bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
+              >
+                #{typeof tag === 'string' ? tag : tag.name}
+              </span>
+            ))}
+            {content.tags.length > 5 && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="px-3 py-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-full transition-colors"
+              >
+                {isExpanded ? '− Show less' : `+ ${content.tags.length - 5} more`}
+              </button>
+            )}
+          </div>
         )}
+
+        {/* Action buttons */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex gap-2">
+            <button
+              onClick={toggleFavorite}
+              className={`p-2.5 rounded-lg transition-all ${
+                isFavorite 
+                  ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 shadow-sm' 
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400'
+              }`}
+              title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              <StarIcon className="w-5 h-5" filled={isFavorite} />
+            </button>
+            <button
+              onClick={() => setShowEditModal(true)}
+              className="p-2.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+              title="Edit content"
+            >
+              <EditIcon className="w-5 h-5" />
+            </button>
+            <button
+              onClick={toggleArchive}
+              className="p-2.5 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all"
+              title={isArchived ? "Unarchive" : "Archive"}
+            >
+              <ArchiveIcon className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="flex gap-2">
+            <a 
+              href={link} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="p-2.5 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all" 
+              title="Open Link"
+            >
+              <ShareIcon className="w-5 h-5" />
+            </a>
+            <button 
+              onClick={() => setShowConfirmModal(true)} 
+              className="p-2.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-all" 
+              title="Delete" 
+              disabled={isDeleting}
+            >
+              <DeleteIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
       </div>
 
       <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
@@ -146,6 +245,31 @@ export function Card({ contentId, title, link, type, refresh }: CardProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {showEditModal && (
+        <Suspense fallback={<div className="fixed inset-0 bg-black/20 dark:bg-black/40 flex items-center justify-center z-50"><Spinner /></div>}>
+          <EditContentModal
+            open={showEditModal}
+            onClose={() => setShowEditModal(false)}
+            content={content}
+            refreshContent={refresh}
+          />
+        </Suspense>
+      )}
     </motion.div>
   );
-}
+};
+
+// Memoize to prevent unnecessary re-renders (keeps embeds playing during data refresh)
+export const Card = memo(CardComponent, (prevProps, nextProps) => {
+  // Only re-render if content actually changed
+  return (
+    prevProps.content._id === nextProps.content._id &&
+    prevProps.content.isFavorite === nextProps.content.isFavorite &&
+    prevProps.content.isArchived === nextProps.content.isArchived &&
+    prevProps.content.title === nextProps.content.title &&
+    prevProps.content.notes === nextProps.content.notes
+  );
+});
+
+Card.displayName = 'Card';

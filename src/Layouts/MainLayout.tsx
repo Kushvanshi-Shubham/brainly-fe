@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useContent } from '../hooks/useContent';
 import { Navbar } from '../components/NavBar';
-import { CreateContentModal } from '../components/ui/CreateContent';
 import { Sidebar } from '../components/ui/Sidebar';
+import { Spinner } from '../components/ui/Spinner';
+
+// Lazy load heavy modal components for better initial load
+const CreateContentModal = lazy(() => 
+  import('../components/ui/CreateContent').then(module => ({ 
+    default: module.CreateContentModal 
+  }))
+);
 
 // Pages that should show sidebar
 const SIDEBAR_PAGES = new Set(['/feed', '/dashboard', '/explore']);
@@ -32,11 +39,15 @@ export const MainLayout = () => {
         </main>
       </div>
       
-      <CreateContentModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        refreshContent={refresh}
-      />
+      {modalOpen && (
+        <Suspense fallback={<div className="fixed inset-0 bg-black/20 dark:bg-black/40 flex items-center justify-center z-50"><Spinner /></div>}>
+          <CreateContentModal
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            refreshContent={refresh}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

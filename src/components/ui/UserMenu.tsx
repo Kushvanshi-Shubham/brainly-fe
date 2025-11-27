@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { logout } from "../../utlis/logout";
@@ -24,7 +24,7 @@ function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () =
   }, [ref, handler]);
 }
 
-export const UserMenu = () => {
+const UserMenuComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [username, setUsername] = useState("User");
   const [profilePic, setProfilePic] = useState("");
@@ -125,3 +125,8 @@ export const UserMenu = () => {
     </div>
   );
 };
+
+const MemoizedUserMenu = memo(UserMenuComponent);
+MemoizedUserMenu.displayName = "UserMenu";
+
+export { MemoizedUserMenu as UserMenu };

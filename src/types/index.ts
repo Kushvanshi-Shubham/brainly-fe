@@ -11,7 +11,10 @@ export interface Content {
   link: string;
   type: string;
   tags: Tag[];
-  createdAt: string;
+  createdAt?: string;
+  isFavorite?: boolean;
+  isArchived?: boolean;
+  notes?: string;
   userId?: {
     _id: string;
     username: string;
@@ -68,23 +71,3 @@ export interface SearchFilters {
   types: string[];
   tags: Tag[];
 }
-
-// Utility type helpers
-export type ContentType = 'youtube' | 'twitter' | 'article' | 'video' | 'resource' | 'other';
-
-export const TYPE_COLORS: Record<string, string> = {
-  youtube: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
-  twitter: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
-  article: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
-  video: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300",
-  other: "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300",
-};
-
-export const TYPE_EMOJIS: Record<string, string> = {
-  youtube: "🎥",
-  twitter: "🐦",
-  article: "📄",
-  video: "📹",
-  resource: "📚",
-  other: "🔗",
-};

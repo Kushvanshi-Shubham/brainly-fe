@@ -1,13 +1,19 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState, useMemo, memo } from "react";
 import { motion } from "framer-motion";
 import { useContent } from "../hooks/useContent";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
+import { FilterSort } from "../components/ui/FilterSort";
+import { ContentGridSkeleton } from "../components/ui/Skeleton";
 
 
 function Dashboard() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
+  const [showFavorites, setShowFavorites] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
   const { contents, loading, error, refresh } = useContent();
 
   // Debounce search input to avoid excessive re-renders
@@ -16,10 +22,47 @@ function Dashboard() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Filter content based on the debounced search term
-  const filteredContents = contents.filter((c) =>
-    c.title.toLowerCase().includes(debouncedSearch.toLowerCase())
-  );
+  // Filter and sort content
+  const filteredContents = useMemo(() => {
+    let filtered = contents;
+
+    // Search filter
+    if (debouncedSearch) {
+      filtered = filtered.filter((c) =>
+        c.title.toLowerCase().includes(debouncedSearch.toLowerCase())
+      );
+    }
+
+    // Type filter
+    if (typeFilter !== "all") {
+      filtered = filtered.filter((c) => c.type === typeFilter);
+    }
+
+    // Favorites filter
+    if (showFavorites) {
+      filtered = filtered.filter((c) => c.isFavorite);
+    }
+
+    // Archived filter
+    if (showArchived) {
+      filtered = filtered.filter((c) => c.isArchived);
+    } else {
+      // By default, hide archived items
+      filtered = filtered.filter((c) => !c.isArchived);
+    }
+
+    // Sort
+    const sorted = [...filtered];
+    if (sortBy === "newest") {
+      sorted.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+    } else if (sortBy === "oldest") {
+      sorted.sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime());
+    } else if (sortBy === "title") {
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    return sorted;
+  }, [contents, debouncedSearch, typeFilter, sortBy, showFavorites, showArchived]);
 
   return (
     <div className="px-6 py-8">
@@ -40,11 +83,21 @@ function Dashboard() {
           />
         </div>
 
+        {/* Filter & Sort */}
+        <FilterSort
+          typeFilter={typeFilter}
+          setTypeFilter={setTypeFilter}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          showFavorites={showFavorites}
+          setShowFavorites={setShowFavorites}
+          showArchived={showArchived}
+          setShowArchived={setShowArchived}
+        />
+
         {/* Content Display */}
         {loading && (
-          <div className="text-center mt-20 text-gray-500 dark:text-gray-400">
-            Loading content...
-          </div>
+          <ContentGridSkeleton count={8} />
         )}
         
         {!loading && error && (
@@ -69,15 +122,12 @@ function Dashboard() {
         {!loading && !error && filteredContents.length > 0 && (
           <motion.div
             layout
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6"
           >
             {filteredContents.map((content) => (
               <Card
                 key={content._id}
-                contentId={content._id}
-                type={content.type}
-                title={content.title}
-                link={content.link}
+                content={{ ...content, tags: content.tags || [] }}
                 refresh={refresh}
               />
             ))}
@@ -88,4 +138,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default memo(Dashboard);

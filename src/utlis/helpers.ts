@@ -1,19 +1,3 @@
-import { TYPE_COLORS, TYPE_EMOJIS } from "../types";
-
-/**
- * Get the Tailwind CSS classes for a content type badge
- */
-export const getTypeColor = (type: string): string => {
-  return TYPE_COLORS[type] || TYPE_COLORS.other;
-};
-
-/**
- * Get the emoji icon for a content type
- */
-export const getTypeEmoji = (type: string): string => {
-  return TYPE_EMOJIS[type] || TYPE_EMOJIS.other;
-};
-
 /**
  * Format a date string to a localized date
  */

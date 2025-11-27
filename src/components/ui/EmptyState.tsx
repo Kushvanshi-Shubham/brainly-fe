@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button } from "./button.tsx";
 import { motion } from "framer-motion";
 
@@ -5,7 +6,7 @@ interface EmptyStateProps {
   onAdd?: () => void;
 }
 
-export function EmptyState({ onAdd }: EmptyStateProps) {
+const EmptyState = memo(({ onAdd }: EmptyStateProps) => {
   return (
     <motion.div
       className="flex flex-col items-center justify-center w-full py-20 px-4 sm:px-6 md:px-8 text-gray-500 dark:text-gray-400 bg-transparent rounded-lg"
@@ -42,4 +43,8 @@ export function EmptyState({ onAdd }: EmptyStateProps) {
       )}
     </motion.div>
   );
-}
+});
+
+EmptyState.displayName = "EmptyState";
+
+export { EmptyState };

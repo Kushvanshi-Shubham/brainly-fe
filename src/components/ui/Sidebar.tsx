@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
+import { memo } from "react";
 import { Logo, UserIcon, ArchiveIcon, SearchIcon } from "../../Icons/IconsImport";
 import { cn } from "../../utlis/cn";
 import { SideToggle } from "../../Icons/IconsDesign/SiderbarToggle";
-
 import { SidebarItem } from "./SiderbarItem";
 
 interface SidebarProps {
@@ -10,7 +10,7 @@ interface SidebarProps {
   readonly setCollapsed: (collapsed: boolean) => void;
 }
 
-export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
+const SidebarComponent = ({ collapsed, setCollapsed }: SidebarProps) => {
   return (
     <div
       className={cn(
@@ -75,3 +75,8 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
     </div>
   );
 }
+
+const MemoizedSidebar = memo(SidebarComponent);
+MemoizedSidebar.displayName = "Sidebar";
+
+export { MemoizedSidebar as Sidebar };

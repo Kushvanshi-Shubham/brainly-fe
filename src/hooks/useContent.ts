@@ -11,6 +11,14 @@ interface ContentItem {
   tags?: Array<{ _id: string; name: string }>;
   createdAt?: string;
   updatedAt?: string;
+  isFavorite?: boolean;
+  isArchived?: boolean;
+  notes?: string;
+  userId?: {
+    _id: string;
+    username: string;
+    profilePic?: string;
+  };
 }
 
 
@@ -28,8 +36,10 @@ export function useContent(): UseContentResult {
   const [error, setError] = useState<string | null>(null);
 
 
-  const fetchContents = useCallback(async () => {
-    setLoading(true);
+  const fetchContents = useCallback(async (silent = false) => {
+    if (!silent) {
+      setLoading(true);
+    }
     setError(null);
     try {
       const token = localStorage.getItem("token");
@@ -53,23 +63,38 @@ export function useContent(): UseContentResult {
         setError("An unexpected error occurred while loading content.");
       }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, []); 
 
   const refresh = useCallback(() => {
-    fetchContents();
+    fetchContents(false); // Explicit refresh shows loading
   }, [fetchContents]);
 
 
   useEffect(() => {
-    refresh(); 
+    fetchContents(false); // Initial load shows loading
 
+    // Refresh on window focus (like Twitter/LinkedIn)
+    const handleFocus = () => {
+      fetchContents(true); // Silent refresh when user comes back
+    };
+    
+    // Refresh when content is modified (create/edit/delete)
+    const handleContentChange = () => {
+      fetchContents(true); // Silent refresh after user action
+    };
+    
+    globalThis.addEventListener('focus', handleFocus);
+    globalThis.addEventListener('content-updated', handleContentChange);
 
-    const interval = setInterval(() => {
-      refresh();
-    }, 60 * 1000); 
-    return () => clearInterval(interval);
-  }, [refresh]); 
+    return () => {
+      globalThis.removeEventListener('focus', handleFocus);
+      globalThis.removeEventListener('content-updated', handleContentChange);
+    };
+  }, [fetchContents]); 
+  
   return { contents, loading, error, refresh };
 }
