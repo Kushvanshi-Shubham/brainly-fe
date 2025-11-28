@@ -9,6 +9,7 @@ import { logout } from "../../utlis/logout";
 import { Avatar } from "../../components/ui/Avatar";
 import type { ProfileData } from "../../types";
 import { getPlatformMeta, type ContentType } from "../../utlis/contentTypeDetection";
+import { useFollowers, useFollowing } from "../../hooks/useFollow";
 
 export default function Profile() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -17,6 +18,22 @@ export default function Profile() {
   const [editMode, setEditMode] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState("");
   const [bio, setBio] = useState("");
+
+  // Get user ID from token
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.id;
+    } catch {
+      return null;
+    }
+  };
+
+  const currentUserId = getUserIdFromToken();
+  const { count: followersCount, refetch: refetchFollowers } = useFollowers(currentUserId);
+  const { count: followingCount, refetch: refetchFollowing } = useFollowing(currentUserId);
 
   const fetchProfile = async () => {
     setLoading(true);
@@ -231,7 +248,7 @@ export default function Profile() {
         </motion.div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -252,7 +269,41 @@ export default function Profile() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Followers</p>
+                <p className="text-4xl font-bold text-green-600 dark:text-green-400 mt-2">
+                  {followersCount}
+                </p>
+              </div>
+              <UserIcon className="w-12 h-12 text-green-600 dark:text-green-400 opacity-20" />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Following</p>
+                <p className="text-4xl font-bold text-orange-600 dark:text-orange-400 mt-2">
+                  {followingCount}
+                </p>
+              </div>
+              <UserIcon className="w-12 h-12 text-orange-600 dark:text-orange-400 opacity-20" />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
           >
             <div className="flex items-center justify-between">
