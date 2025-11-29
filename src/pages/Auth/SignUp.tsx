@@ -76,11 +76,16 @@ export function SignUp() {
       toast.success("Signed up successfully! Please log in.");
       navigate("/login");
     } catch (e) {
-      if (axios.isAxiosError(e) && e.response) {
-        if (e.response.status === 409) {
-          toast.error("Signup failed. Email may already be taken.");
+      if (axios.isAxiosError(e)) {
+        if (e.response) {
+          // Backend returned an error response
+          const message = e.response.data?.message || "Signup failed";
+          toast.error(message);
+        } else if (e.request) {
+          // Request was made but no response (backend down)
+          toast.error("Cannot connect to server. Please ensure the backend is running.");
         } else {
-          toast.error("Signup failed. Please try again later.");
+          toast.error("An unexpected error occurred.");
         }
       } else {
         toast.error("Network error. Please check your internet connection.");

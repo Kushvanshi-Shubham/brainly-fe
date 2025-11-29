@@ -2,11 +2,14 @@ import axios from "axios";
 import { BACKEND_URL } from "../../config";
 import { DeleteIcon, ShareIcon, EditIcon, StarIcon, ArchiveIcon } from "../../Icons/IconsImport";
 import { useState, memo, lazy, Suspense } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Button } from "./button";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./Dialog";
 import { EmbedPreview } from "./EmbedPreview";
+import { AddToCollection } from "./AddToCollection";
+import { useCollections } from "../../hooks/useCollections";
 import { getPlatformMeta, type ContentType } from "../../utlis/contentTypeDetection";
 import type { Content } from "../../types";
 import { triggerContentUpdate } from "../../utlis/events";
@@ -22,37 +25,38 @@ const EditContentModal = lazy(() =>
 interface CardProps {
   content: Content;
   refresh: () => void;
+  collectionId?: string;
+  onContentRemoved?: () => void;
 }
 
-const CardComponent = ({ content, refresh }: CardProps) => {
+const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: CardProps) => {
+  const navigate = useNavigate();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showCollectionDialog, setShowCollectionDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFavorite, setIsFavorite] = useState(content.isFavorite || false);
   const [isArchived, setIsArchived] = useState(content.isArchived || false);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { _id: contentId, title, link, type, notes } = content;
+  const { _id: contentId, title, link, type, notes, userId } = content;
   const platformMeta = getPlatformMeta(type as ContentType);
 
   const handleDelete = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Authentication error. Please log in again.");
+      return;
+    }
+
     setIsDeleting(true);
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Authentication error. Please log in again.");
-        setIsDeleting(false);
-        return;
-      }
-
       await axios.delete(`${BACKEND_URL}/api/v1/content/${contentId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       toast.success("Content deleted successfully!");
-      triggerContentUpdate(); // Instant refresh across app
+      triggerContentUpdate();
       refresh();
       setShowConfirmModal(false);
     } catch (err) {
@@ -71,9 +75,10 @@ const CardComponent = ({ content, refresh }: CardProps) => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setIsFavorite(!isFavorite);
-      toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
-      triggerContentUpdate(); // Instant refresh
+      const newFavorite = !isFavorite;
+      setIsFavorite(newFavorite);
+      toast.success(newFavorite ? "Added to favorites" : "Removed from favorites");
+      triggerContentUpdate();
       refresh();
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
@@ -89,13 +94,29 @@ const CardComponent = ({ content, refresh }: CardProps) => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setIsArchived(!isArchived);
-      toast.success(isArchived ? "Unarchived" : "Archived");
-      triggerContentUpdate(); // Instant refresh
+      const newArchived = !isArchived;
+      setIsArchived(newArchived);
+      toast.success(newArchived ? "Archived" : "Unarchived");
+      triggerContentUpdate();
       refresh();
     } catch (error) {
       console.error("Failed to toggle archive:", error);
       toast.error("Failed to update archive status");
+    }
+  };
+
+  const { removeFromCollection } = useCollections();
+  
+  const handleRemoveFromCollection = async () => {
+    if (!collectionId) return;
+    
+    try {
+      await removeFromCollection(collectionId, contentId);
+      if (onContentRemoved) {
+        onContentRemoved();
+      }
+    } catch (error) {
+      console.error("Failed to remove from collection:", error);
     }
   };
 
@@ -110,7 +131,7 @@ const CardComponent = ({ content, refresh }: CardProps) => {
       className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border border-gray-200 dark:border-gray-700"
     >
       {/* Embed preview - Full width at top */}
-      <div className="w-full">
+      <div className="w-full max-h-[600px] overflow-hidden">
         <EmbedPreview url={link} type={type as ContentType} title={title} />
       </div>
 
@@ -132,6 +153,16 @@ const CardComponent = ({ content, refresh }: CardProps) => {
             {isFavorite && <span className="text-yellow-500 text-lg">★</span>}
             {isArchived && <span className="text-purple-500 text-lg">📦</span>}
           </div>
+
+          {/* Username - clickable */}
+          {userId && (
+            <button
+              onClick={() => navigate(`/user/${userId._id}`)}
+              className="text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 font-medium mb-2 hover:underline"
+            >
+              @{userId.username}
+            </button>
+          )}
 
           <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2">
             {title}
@@ -159,14 +190,19 @@ const CardComponent = ({ content, refresh }: CardProps) => {
         {/* Tags */}
         {content.tags && content.tags.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
-            {content.tags.slice(0, isExpanded ? content.tags.length : 5).map((tag, index) => (
-              <span
-                key={`${typeof tag === 'string' ? tag : tag.name}-${index}`}
-                className="px-3 py-1.5 text-xs font-semibold bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
-              >
-                #{typeof tag === 'string' ? tag : tag.name}
-              </span>
-            ))}
+            {content.tags.slice(0, isExpanded ? content.tags.length : 5).map((tag, index) => {
+              const tagName = typeof tag === 'string' ? tag : tag.name;
+              return (
+                <button
+                  key={`${tagName}-${index}`}
+                  onClick={() => navigate(`/explore?tag=${encodeURIComponent(tagName)}`)}
+                  className="px-3 py-1.5 text-xs font-semibold bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                  title={`Search for content tagged with ${tagName}`}
+                >
+                  #{tagName}
+                </button>
+              );
+            })}
             {content.tags.length > 5 && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
@@ -181,6 +217,17 @@ const CardComponent = ({ content, refresh }: CardProps) => {
         {/* Action buttons */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex gap-2">
+            {collectionId && (
+              <button
+                onClick={handleRemoveFromCollection}
+                className="p-2.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-all"
+                title="Remove from collection"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
             <button
               onClick={toggleFavorite}
               className={`p-2.5 rounded-lg transition-all ${
@@ -191,6 +238,15 @@ const CardComponent = ({ content, refresh }: CardProps) => {
               title={isFavorite ? "Remove from favorites" : "Add to favorites"}
             >
               <StarIcon className="w-5 h-5" filled={isFavorite} />
+            </button>
+            <button
+              onClick={() => setShowCollectionDialog(true)}
+              className="p-2.5 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all"
+              title="Add to collection"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+              </svg>
             </button>
             <button
               onClick={() => setShowEditModal(true)}
@@ -256,6 +312,13 @@ const CardComponent = ({ content, refresh }: CardProps) => {
           />
         </Suspense>
       )}
+
+      <Dialog open={showCollectionDialog} onOpenChange={setShowCollectionDialog}>
+        <AddToCollection 
+          contentId={content._id} 
+          onClose={() => setShowCollectionDialog(false)} 
+        />
+      </Dialog>
     </motion.div>
   );
 };

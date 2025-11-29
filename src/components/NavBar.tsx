@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onAddContent }) => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search content..."
+            placeholder="🌐 Search all content globally..."
             autoFocus
             onBlur={() => !searchQuery && setShowSearch(false)}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
@@ -76,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onAddContent }) => {
           <button
             onClick={() => setShowSearch(true)}
             className="p-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
-            title="Search"
+            title="Global Search - Search all content"
           >
             <SearchIcon className="h-5 w-5" />
           </button>

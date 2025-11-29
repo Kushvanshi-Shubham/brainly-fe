@@ -15,7 +15,7 @@ interface EditContentModalProps {
   refreshContent: () => void;
 }
 
-export function EditContentModal({ open, onClose, content, refreshContent }: EditContentModalProps) {
+export function EditContentModal({ open, onClose, content, refreshContent }: Readonly<EditContentModalProps>) {
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
   const [type, setType] = useState<string>("article");

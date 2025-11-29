@@ -1,18 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { followService } from "../services/followService";
+
+interface User {
+  _id: string;
+  username: string;
+  email: string;
+  profilePic?: string;
+  bio?: string;
+}
 
 export const useFollow = (targetUserId: string | null) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (targetUserId) {
-      checkFollowStatus();
-    }
-  }, [targetUserId]);
-
-  const checkFollowStatus = async () => {
+  const checkFollowStatus = useCallback(async () => {
     if (!targetUserId) return;
     
     try {
@@ -21,7 +23,13 @@ export const useFollow = (targetUserId: string | null) => {
     } catch (err) {
       console.error("Failed to check follow status:", err);
     }
-  };
+  }, [targetUserId]);
+
+  useEffect(() => {
+    if (targetUserId) {
+      checkFollowStatus();
+    }
+  }, [targetUserId, checkFollowStatus]);
 
   const toggleFollow = async () => {
     if (!targetUserId) return;
@@ -37,8 +45,9 @@ export const useFollow = (targetUserId: string | null) => {
         await followService.followUser(targetUserId);
         setIsFollowing(true);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to update follow status");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update follow status";
+      setError(errorMessage);
       console.error("Follow/unfollow error:", err);
     } finally {
       setLoading(false);
@@ -49,17 +58,11 @@ export const useFollow = (targetUserId: string | null) => {
 };
 
 export const useFollowers = (userId: string | null) => {
-  const [followers, setFollowers] = useState<any[]>([]);
+  const [followers, setFollowers] = useState<User[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (userId) {
-      fetchFollowers();
-    }
-  }, [userId]);
-
-  const fetchFollowers = async () => {
+  const fetchFollowers = useCallback(async () => {
     if (!userId) return;
 
     setLoading(true);
@@ -72,23 +75,23 @@ export const useFollowers = (userId: string | null) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchFollowers();
+    }
+  }, [userId, fetchFollowers]);
 
   return { followers, count, loading, refetch: fetchFollowers };
 };
 
 export const useFollowing = (userId: string | null) => {
-  const [following, setFollowing] = useState<any[]>([]);
+  const [following, setFollowing] = useState<User[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (userId) {
-      fetchFollowing();
-    }
-  }, [userId]);
-
-  const fetchFollowing = async () => {
+  const fetchFollowing = useCallback(async () => {
     if (!userId) return;
 
     setLoading(true);
@@ -101,7 +104,13 @@ export const useFollowing = (userId: string | null) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchFollowing();
+    }
+  }, [userId, fetchFollowing]);
 
   return { following, count, loading, refetch: fetchFollowing };
 };

@@ -1,148 +1,136 @@
-import { useEffect, useState, memo, useMemo, useCallback } from "react";
+import { useEffect, useState, memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { BACKEND_URL } from "../config";
 import { Spinner } from "../components/ui/Spinner";
 import { Avatar } from "../components/ui/Avatar";
-import { CalendarIcon, StarIcon } from "../Icons/IconsImport";
+import { CalendarIcon, FeedIcon } from "../Icons/IconsImport";
 import { EmbedPreview } from "../components/ui/EmbedPreview";
 import { getPlatformMeta, type ContentType } from "../utlis/contentTypeDetection";
 import type { Content } from "../types";
+import { useNavigate } from "react-router-dom";
+import { FollowButton } from "../components/ui/FollowButton";
+
+interface SocialFeedContent extends Content {
+  userDetails?: {
+    _id: string;
+    username: string;
+    email: string;
+    profilePic?: string;
+  };
+}
 
 const SocialFeed = () => {
-  const [feed, setFeed] = useState<Content[]>([]);
+  const navigate = useNavigate();
+  const [feed, setFeed] = useState<SocialFeedContent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [trending, setTrending] = useState<SocialFeedContent[]>([]);
+  const [popularTags, setPopularTags] = useState<{ _id: string; count: number }[]>([]);
+  const [stats, setStats] = useState({
+    totalItems: 0,
+    followingCount: 0,
+    currentPage: 1,
+    totalPages: 1,
+    hasMore: false
+  });
 
   const fetchFeed = useCallback(async (silent = false) => {
     try {
       if (!silent) setLoading(true);
       const token = localStorage.getItem("token");
+      if (!token) return;
       
-      // Fetch all user's content for the feed (no pagination, we want full analysis)
-      const response = await axios.get(`${BACKEND_URL}/api/v1/content`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const headers = { Authorization: `Bearer ${token}` };
+      
+      // Use timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      
+      const [feedRes, trendingRes, tagsRes] = await Promise.all([
+        axios.get(`${BACKEND_URL}/api/v1/social/feed`, { headers, signal: controller.signal }),
+        axios.get(`${BACKEND_URL}/api/v1/social/trending`, { headers, signal: controller.signal }),
+        axios.get(`${BACKEND_URL}/api/v1/social/tags`, { headers, signal: controller.signal })
+      ]);
+      
+      clearTimeout(timeoutId);
 
-      setFeed(response.data.content || []);
+      setFeed(feedRes.data.content || []);
+      setStats(feedRes.data.stats || {});
+      setTrending(trendingRes.data.content || []);
+      setPopularTags(tagsRes.data.tags || []);
     } catch (error) {
-      console.error("Failed to fetch feed:", error);
-      toast.error("Failed to load feed");
+      if (axios.isCancel(error)) {
+        console.log('Request cancelled');
+        return;
+      }
+      console.error("Failed to fetch social feed:", error);
+      toast.error("Failed to load social feed");
     } finally {
       if (!silent) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    void fetchFeed();
+    fetchFeed();
     
-    // Refresh on window focus (like modern social apps)
-    const handleFocus = () => {
-      void fetchFeed(true); // Silent refresh when user returns
-    };
-    
+    const handleFocus = () => fetchFeed(true);
     window.addEventListener('focus', handleFocus);
     
     return () => window.removeEventListener('focus', handleFocus);
   }, [fetchFeed]);
 
-  // Smart analytics for the feed
-  const analytics = useMemo(() => {
-    const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-    const today = new Date(now.setHours(0, 0, 0, 0));
-
-    // This week's saves
-    const thisWeekSaves = feed.filter(item => {
-      const createdAt = new Date(item.createdAt || 0);
-      return createdAt >= weekAgo;
-    });
-
-    // Today's saves
-    const todaySaves = feed.filter(item => {
-      const createdAt = new Date(item.createdAt || 0);
-      return createdAt >= today;
-    });
-
-    // Tag frequency (trending tags)
-    const tagFrequency: Record<string, number> = {};
-    feed.forEach(item => {
-      item.tags?.forEach(tag => {
-        const tagName = typeof tag === 'string' ? tag : tag.name;
-        tagFrequency[tagName] = (tagFrequency[tagName] || 0) + 1;
-      });
-    });
-    const trendingTags = Object.entries(tagFrequency)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 5);
-
-    // Unread items (not favorited, not archived)
-    const unreadItems = feed.filter(item => !item.isFavorite && !item.isArchived);
-
-    // On this day (same date, 1 year ago)
-    const onThisDay = feed.filter(item => {
-      const createdAt = new Date(item.createdAt || 0);
-      return createdAt <= yearAgo && 
-             createdAt.getMonth() === now.getMonth() && 
-             createdAt.getDate() === now.getDate();
-    });
-
-    // Group by day for timeline
-    const groupedByDay: Record<string, Content[]> = {};
-    feed.forEach(item => {
-      const date = new Date(item.createdAt || 0);
-      const dateKey = date.toLocaleDateString("en-US", { 
-        month: "short", 
-        day: "numeric", 
-        year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined 
-      });
-      if (!groupedByDay[dateKey]) {
-        groupedByDay[dateKey] = [];
-      }
-      groupedByDay[dateKey].push(item);
-    });
-
-    // Random discovery
-    const randomItem = feed.length > 0 ? feed[Math.floor(Math.random() * feed.length)] : null;
-
-    return {
-      thisWeekSaves,
-      todaySaves,
-      trendingTags,
-      unreadItems,
-      onThisDay,
-      groupedByDay,
-      randomItem,
-      totalFavorites: feed.filter(item => item.isFavorite).length,
-    };
-  }, [feed]);
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
-        <Spinner />
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-purple-600 dark:text-purple-400">
+          <Spinner />
+        </div>
       </div>
     );
   }
 
-  if (feed.length === 0) {
+  if (stats.followingCount === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen px-4 py-8">
+        <div className="max-w-4xl mx-auto text-center py-16">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-16"
           >
-            <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center">
-              <CalendarIcon className="w-16 h-16 text-blue-500 dark:text-blue-400" />
-            </div>
-            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-              No content yet
+            <div className="text-6xl mb-6">👥</div>
+            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+              No Social Feed Yet
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-8">
+              Follow people to see their content in your social feed
+            </p>
+            <button
+              onClick={() => navigate("/discover")}
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
+            >
+              Discover People
+            </button>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  if (feed.length === 0 && stats.followingCount > 0) {
+    return (
+      <div className="min-h-screen px-4 py-8">
+        <div className="max-w-4xl mx-auto text-center py-16">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="text-6xl mb-6">📭</div>
+            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+              Feed is Empty
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Start saving content to see personalized insights here!
+              The people you follow haven't saved any content yet
             </p>
           </motion.div>
         </div>
@@ -150,206 +138,119 @@ const SocialFeed = () => {
     );
   }
 
-  const timelineEntries = Object.entries(analytics.groupedByDay)
-    .sort(([dateA], [dateB]) => {
-      return new Date(dateB).getTime() - new Date(dateA).getTime();
-    })
-    .slice(0, 7); // Show last 7 days
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="min-h-screen px-4 py-8">
+      <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            📊 Your Learning Feed
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
+            <FeedIcon className="w-10 h-10 text-purple-600 dark:text-purple-400" />{" "}
+            Social Feed
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
-            Track progress, discover patterns, stay motivated
+          <p className="text-gray-600 dark:text-gray-400">
+            Content from {stats.followingCount} people you follow
           </p>
         </motion.div>
 
-        {/* Week at a Glance - Stats Card */}
+        {/* Stats Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-8 text-white shadow-2xl"
+          className="bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl p-6 text-white shadow-xl"
         >
-          <h2 className="text-2xl font-bold mb-6">📈 Your Week at a Glance</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <div className="text-4xl font-bold">{analytics.thisWeekSaves.length}</div>
-              <div className="text-sm opacity-90 mt-1">Items saved this week</div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div>
+              <div className="text-3xl font-bold">{stats.totalItems}</div>
+              <div className="text-sm opacity-90">Total Items</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <div className="text-4xl font-bold">{analytics.todaySaves.length}</div>
-              <div className="text-sm opacity-90 mt-1">Saved today</div>
+            <div>
+              <div className="text-3xl font-bold">{stats.followingCount}</div>
+              <div className="text-sm opacity-90">Following</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <div className="text-4xl font-bold">{analytics.totalFavorites}</div>
-              <div className="text-sm opacity-90 mt-1">Total favorites ⭐</div>
+            <div className="col-span-2 md:col-span-1">
+              <div className="text-3xl font-bold">{trending.length}</div>
+              <div className="text-sm opacity-90">Trending This Week</div>
             </div>
           </div>
-
-          {/* Trending Tags */}
-          {analytics.trendingTags.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-3">🔥 Your Trending Topics</h3>
-              <div className="flex flex-wrap gap-3">
-                {analytics.trendingTags.map(([tag, count]) => (
-                  <span
-                    key={tag}
-                    className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium"
-                  >
-                    #{tag} ({count})
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </motion.div>
 
-        {/* Unread Items Section */}
-        {analytics.unreadItems.length > 0 && (
+        {/* Trending Section */}
+        {trending.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-xl border border-gray-200 dark:border-gray-800"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                📚 Waiting to Read
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                🔥 Trending This Week
               </h2>
-              <span className="px-4 py-2 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full font-semibold">
-                {analytics.unreadItems.length} items
-              </span>
+              <p className="text-gray-600 dark:text-gray-400">Recent saves from your network</p>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              You have {analytics.unreadItems.length} items waiting. Start reading to mark them as favorites!
-            </p>
-            <div className="grid grid-cols-1 gap-4">
-              {analytics.unreadItems.slice(0, 3).map((item, idx) => (
-                <CompactCard key={item._id} item={item} index={idx} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {trending.map((item, idx) => (
+                <SocialFeedCard key={item._id} item={item} index={idx} />
               ))}
             </div>
           </motion.div>
         )}
 
-        {/* On This Day */}
-        {analytics.onThisDay.length > 0 && (
+        {/* Popular Tags */}
+        {popularTags.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-6 shadow-xl border border-purple-200 dark:border-purple-800"
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
           >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              🗓️ On This Day
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              📌 Popular Tags
             </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
-              1 year ago, you saved this. Time to revisit?
-            </p>
-            <FeedCard item={analytics.onThisDay[0]} index={0} />
+            <div className="flex flex-wrap gap-3">
+              {popularTags.map((tag) => (
+                <button
+                  key={tag._id}
+                  onClick={() => navigate(`/explore?tag=${encodeURIComponent(tag._id)}`)}
+                  className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                  title={`Explore content tagged with ${tag._id}`}
+                >
+                  #{tag._id} ({tag.count})
+                </button>
+              ))}
+            </div>
           </motion.div>
         )}
 
-        {/* Random Discovery */}
-        {analytics.randomItem && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-green-100 to-teal-100 dark:from-green-900/30 dark:to-teal-900/30 rounded-2xl p-6 shadow-xl border border-green-200 dark:border-green-800"
-          >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              🎲 Random Discovery
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Rediscover something from your library
-            </p>
-            <FeedCard item={analytics.randomItem} index={0} />
-          </motion.div>
-        )}
-
-        {/* Recently Saved Timeline */}
+        {/* Main Feed */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="space-y-8"
+          transition={{ delay: 0.4 }}
         >
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            ⏱️ Recently Saved
-          </h2>
-          {timelineEntries.map(([date, items], idx) => (
-            <div key={date} className="space-y-4">
-              <div className="sticky top-4 z-10 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-full inline-block shadow-md">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                  {date} • {items.length} items
-                </h3>
-              </div>
-              <div className="space-y-4 ml-4 border-l-4 border-blue-500 dark:border-blue-400 pl-6">
-                {items.slice(0, 5).map((item, itemIdx) => (
-                  <FeedCard key={item._id} item={item} index={idx * 5 + itemIdx} />
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              📚 All Content
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">Latest saves from your network</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {feed.map((item, idx) => (
+              <SocialFeedCard key={item._id} item={item} index={idx} />
+            ))}
+          </div>
         </motion.div>
       </div>
     </div>
   );
 };
 
-// Compact card for unread section
-const CompactCard = memo(({ item, index }: { item: Content; index: number }) => {
-  const platformMeta = getPlatformMeta(item.type as ContentType);
-  
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors border border-gray-200 dark:border-gray-700"
-    >
-      <div
-        className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0"
-        style={{ backgroundColor: platformMeta.color }}
-      >
-        {platformMeta.icon}
-      </div>
-      <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-1">
-          {item.title || "Untitled"}
-        </h3>
-        <a
-          href={item.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate block"
-        >
-          {item.link}
-        </a>
-      </div>
-      <a
-        href={item.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors flex-shrink-0"
-      >
-        Read Now
-      </a>
-    </motion.div>
-  );
-});
-
-// Memoized feed card component (same as before)
-const FeedCard = memo(({ item, index }: { item: Content; index: number }) => {
+// Social Feed Card component
+const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: number }) => {
+  const navigate = useNavigate();
   const platformMeta = getPlatformMeta(item.type as ContentType);
   const createdDate = new Date(item.createdAt || Date.now()).toLocaleDateString("en-US", {
     month: "short",
@@ -366,24 +267,29 @@ const FeedCard = memo(({ item, index }: { item: Content; index: number }) => {
     >
       {/* User Header */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-        <div className="flex items-center gap-3">
-          <Avatar username={item.userId?.username || "User"} />
-          <div className="flex-1">
-            <p className="font-semibold text-gray-900 dark:text-white">
-              You
-            </p>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <CalendarIcon className="w-3.5 h-3.5" />
-              <span>{createdDate}</span>
-              {item.isFavorite && (
-                <>
-                  <span>•</span>
-                  <StarIcon className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-                  <span>Favorited</span>
-                </>
-              )}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => navigate(`/user/${item.userDetails?._id}`)}
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
+            <Avatar 
+              profilePic={item.userDetails?.profilePic}
+              username={item.userDetails?.username || "User"} 
+            />
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white">
+                @{item.userDetails?.username || "unknown"}
+              </p>
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <CalendarIcon className="w-3.5 h-3.5" />
+                <span>{createdDate}</span>
+              </div>
             </div>
-          </div>
+          </button>
+          <FollowButton 
+            userId={item.userDetails?._id || ""} 
+            username={item.userDetails?.username || ""}
+          />
         </div>
       </div>
 
@@ -417,45 +323,53 @@ const FeedCard = memo(({ item, index }: { item: Content; index: number }) => {
           href={item.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-blue-600 dark:text-blue-400 hover:underline mb-3 block truncate"
+          className="text-blue-600 dark:text-blue-400 hover:underline text-sm line-clamp-1 mb-3 block"
         >
           {item.link}
         </a>
 
-        {/* Notes */}
-        {item.notes && (
-          <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-              {item.notes}
-            </p>
-          </div>
-        )}
-
         {/* Tags */}
         {item.tags && item.tags.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {item.tags.slice(0, 5).map((tag, idx) => {
+          <div className="flex flex-wrap gap-2 mb-4">
+            {item.tags.slice(0, 3).map((tag) => {
               const tagName = typeof tag === 'string' ? tag : tag.name;
-              const tagId = typeof tag === 'string' ? idx : tag._id;
+              const tagId = typeof tag === 'object' && tag._id ? tag._id : tagName;
               return (
-                <span
-                  key={tagId || idx}
-                  className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                <button
+                  key={tagId}
+                  onClick={() => navigate(`/explore?tag=${encodeURIComponent(tagName)}`)}
+                  className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md text-xs font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                  title={`Explore content tagged with ${tagName}`}
                 >
                   #{tagName}
-                </span>
+                </button>
               );
             })}
-            {item.tags.length > 5 && (
-              <span className="px-3 py-1 text-gray-500 dark:text-gray-400 text-xs font-medium">
-                +{item.tags.length - 5} more
+            {item.tags.length > 3 && (
+              <span className="px-2 py-1 text-gray-500 text-xs">
+                +{item.tags.length - 3} more
               </span>
             )}
           </div>
         )}
+
+        {/* View Link Button */}
+        <a
+          href={item.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+        >
+          View Content
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
       </div>
     </motion.article>
   );
 });
+
+SocialFeedCard.displayName = "SocialFeedCard";
 
 export default SocialFeed;

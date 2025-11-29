@@ -14,7 +14,22 @@ function Dashboard() {
   const [sortBy, setSortBy] = useState("newest");
   const [showFavorites, setShowFavorites] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<string>("all");
   const { contents, loading, error, refresh } = useContent();
+
+  // Extract unique tags from all content
+  const availableTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    for (const content of contents) {
+      if (content.tags) {
+        for (const tag of content.tags) {
+          const tagName = typeof tag === 'string' ? tag : tag.name;
+          if (tagName) tagSet.add(tagName);
+        }
+      }
+    }
+    return Array.from(tagSet).sort((a, b) => a.localeCompare(b));
+  }, [contents]);
 
   // Debounce search input to avoid excessive re-renders
   useEffect(() => {
@@ -22,47 +37,32 @@ function Dashboard() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Filter and sort content
   const filteredContents = useMemo(() => {
-    let filtered = contents;
-
-    // Search filter
-    if (debouncedSearch) {
-      filtered = filtered.filter((c) =>
-        c.title.toLowerCase().includes(debouncedSearch.toLowerCase())
-      );
-    }
-
-    // Type filter
-    if (typeFilter !== "all") {
-      filtered = filtered.filter((c) => c.type === typeFilter);
-    }
-
-    // Favorites filter
-    if (showFavorites) {
-      filtered = filtered.filter((c) => c.isFavorite);
-    }
-
-    // Archived filter
-    if (showArchived) {
-      filtered = filtered.filter((c) => c.isArchived);
-    } else {
-      // By default, hide archived items
-      filtered = filtered.filter((c) => !c.isArchived);
-    }
+    const searchLower = debouncedSearch.toLowerCase();
+    
+    const filtered = contents
+      .filter(c => !debouncedSearch || c.title.toLowerCase().includes(searchLower))
+      .filter(c => typeFilter === "all" || c.type === typeFilter)
+      .filter(c => {
+        if (selectedTag === "all") return true;
+        return c.tags?.some(tag => {
+          const tagName = typeof tag === 'string' ? tag : tag.name;
+          return tagName === selectedTag;
+        });
+      })
+      .filter(c => !showFavorites || c.isFavorite)
+      .filter(c => showArchived ? c.isArchived : !c.isArchived);
 
     // Sort
-    const sorted = [...filtered];
     if (sortBy === "newest") {
-      sorted.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+      return filtered.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
     } else if (sortBy === "oldest") {
-      sorted.sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime());
+      return filtered.sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime());
     } else if (sortBy === "title") {
-      sorted.sort((a, b) => a.title.localeCompare(b.title));
+      return filtered.sort((a, b) => a.title.localeCompare(b.title));
     }
-
-    return sorted;
-  }, [contents, debouncedSearch, typeFilter, sortBy, showFavorites, showArchived]);
+    return filtered;
+  }, [contents, debouncedSearch, typeFilter, selectedTag, sortBy, showFavorites, showArchived]);
 
   return (
     <div className="px-6 py-8">
@@ -76,12 +76,54 @@ function Dashboard() {
         <div className="mb-6">
           <input
             type="text"
-            placeholder="Search your content..."
+            placeholder="📁 Search your saved content..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
           />
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Search through your personal saved content only
+          </p>
         </div>
+
+        {/* Tag Filter */}
+        {availableTags.length > 0 && (
+          <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+              🏷️ Filter by Tag
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedTag("all")}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  selectedTag === "all"
+                    ? "bg-purple-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
+              >
+                All Tags ({contents.length})
+              </button>
+              {availableTags.map((tag) => {
+                const count = contents.filter(c => 
+                  c.tags?.some(t => (typeof t === 'string' ? t : t.name) === tag)
+                ).length;
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => setSelectedTag(tag)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                      selectedTag === tag
+                        ? "bg-purple-600 text-white"
+                        : "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/50"
+                    }`}
+                  >
+                    #{tag} ({count})
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Filter & Sort */}
         <FilterSort

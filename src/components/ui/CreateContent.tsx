@@ -15,7 +15,7 @@ interface CreateContentModalProps {
   refreshContent: () => void; 
 }
 
-export function CreateContentModal({ open, onClose, refreshContent }: CreateContentModalProps) {
+export function CreateContentModal({ open, onClose, refreshContent }: Readonly<CreateContentModalProps>) {
   const titleRef = useRef<HTMLInputElement>(null);
   const linkRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);

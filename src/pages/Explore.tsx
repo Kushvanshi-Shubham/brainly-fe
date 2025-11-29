@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -9,19 +10,23 @@ import type { Content, DiscoveryData, SearchFilters } from "../types";
 import { getPlatformMeta, type ContentType } from "../utlis/contentTypeDetection";
 
 const Explore = () => {
-  const [activeTab, setActiveTab] = useState<"discover" | "search">("discover");
+  const [searchParams] = useSearchParams();
+  const urlQuery = searchParams.get('q') || '';
+  const urlTag = searchParams.get('tag') || '';
+  
+  const [activeTab, setActiveTab] = useState<"discover" | "search">((urlQuery || urlTag) ? "search" : "discover");
   
   // Discovery state
   const [discoveryData, setDiscoveryData] = useState<DiscoveryData | null>(null);
   const [discoveryLoading, setDiscoveryLoading] = useState(true);
   
   // Search state
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(urlQuery);
   const [searchResults, setSearchResults] = useState<Content[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>({ types: [], tags: [] });
   const [selectedType, setSelectedType] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>(urlTag ? [urlTag] : []);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,10 +62,12 @@ const Explore = () => {
     try {
       setDiscoveryLoading(true);
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${BACKEND_URL}/api/v1/discovery/feed`, {
-        headers: { Authorization: `Bearer ${token}` },
+      if (!token) return;
+      
+      const { data } = await axios.get(`${BACKEND_URL}/api/v1/discovery/feed`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      setDiscoveryData(response.data);
+      setDiscoveryData(data);
     } catch (error) {
       console.error("Failed to fetch discovery data:", error);
       toast.error("Failed to load discovery feed");
@@ -72,10 +79,12 @@ const Explore = () => {
   const fetchSearchFilters = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${BACKEND_URL}/api/v1/search/filters`, {
-        headers: { Authorization: `Bearer ${token}` },
+      if (!token) return;
+      
+      const { data } = await axios.get(`${BACKEND_URL}/api/v1/search/filters`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      setFilters(response.data);
+      setFilters(data);
     } catch (error) {
       console.error("Failed to fetch filters:", error);
     }
@@ -85,25 +94,25 @@ const Explore = () => {
     try {
       setSearchLoading(true);
       const token = localStorage.getItem("token");
+      if (!token) return;
       
       const params: Record<string, unknown> = {
         page: currentPage,
         limit: 12,
+        ...(searchQuery && { query: searchQuery }),
+        ...(selectedType && { type: selectedType }),
+        ...(selectedTags.length && { tags: selectedTags.join(",") }),
+        ...(startDate && { startDate }),
+        ...(endDate && { endDate })
       };
-      
-      if (searchQuery) params.query = searchQuery;
-      if (selectedType) params.type = selectedType;
-      if (selectedTags.length > 0) params.tags = selectedTags.join(",");
-      if (startDate) params.startDate = startDate;
-      if (endDate) params.endDate = endDate;
 
-      const response = await axios.get(`${BACKEND_URL}/api/v1/search`, {
+      const { data } = await axios.get(`${BACKEND_URL}/api/v1/search`, {
         headers: { Authorization: `Bearer ${token}` },
-        params,
+        params
       });
 
-      setSearchResults(response.data.results || []);
-      setTotalPages(response.data.totalPages || 1);
+      setSearchResults(data.results || []);
+      setTotalPages(data.totalPages || 1);
     } catch (error) {
       console.error("Search failed:", error);
       toast.error("Search failed");
@@ -280,16 +289,26 @@ const Explore = () => {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                       🏷️ Popular Tags
                     </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {discoveryData.tagStats.map((tag) => (
-                        <span
-                          key={tag._id}
-                          className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-full text-sm font-medium"
-                        >
-                          #{tag.name} ({tag.count})
-                        </span>
-                      ))}
-                    </div>
+                    {discoveryData.tagStats.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {discoveryData.tagStats.map((tag) => (
+                          <button
+                            key={tag._id}
+                            onClick={() => {
+                              setActiveTab("search");
+                              setSelectedTags([tag.name]);
+                              setSearchQuery("");
+                            }}
+                            className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-full text-sm font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                            title={`Filter by ${tag.name}`}
+                          >
+                            #{tag.name} ({tag.count})
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 dark:text-gray-400">No tags found. Start tagging your content!</p>
+                    )}
                   </motion.div>
 
                   {/* On This Day */}
@@ -351,7 +370,7 @@ const Explore = () => {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search your content..."
+                      placeholder="🔍 Advanced search with filters (type, tags, dates)..."
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
@@ -366,6 +385,9 @@ const Explore = () => {
                     Filters {showFilters ? "▲" : "▼"}
                   </button>
                 </div>
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Search across all platform content with advanced filtering options
+                </p>
 
                 {/* Filters Panel */}
                 {showFilters && (

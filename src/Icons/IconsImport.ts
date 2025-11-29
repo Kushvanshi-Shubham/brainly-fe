@@ -1,43 +1,27 @@
-import { CrossIcon } from "./IconsDesign/CrossIcon";
-import { DeleteIcon } from "./IconsDesign/DeleteIcon";
-import { DiscordIcon } from "./IconsDesign/Discord";
-import { GithubIcon } from "./IconsDesign/Github";
-import { Logo } from "./IconsDesign/logo";
-import { PlusIcon } from "./IconsDesign/PlusIcon";
-import { ShareIcon } from "./IconsDesign/ShareIcon";
-import { SlackIcon } from "./IconsDesign/Slack";
-import { TwitterIcon } from "./IconsDesign/TwitterIcon";
-import { YoutubeIcon } from "./IconsDesign/YoutubeIcon";
-import { UserIcon } from "./IconsDesign/UserIcon";
-import { ArchiveIcon } from "./IconsDesign/ArchiveIcon";
-import { CalendarIcon } from "./IconsDesign/CalendarIcon";
-import { LogOutIcon } from "./IconsDesign/LogoutIcon";
-import { SearchIcon } from "./IconsDesign/SearchIcon";
-import { MoonIcon } from "./IconsDesign/MoonIcon";
-import { SunIcon } from "./IconsDesign/SunIcon";
-import { ChevronDownIcon } from "./IconsDesign/ChevronDownIcon";
-import { EditIcon } from "./IconsDesign/EditIcon";
-import { StarIcon } from "./IconsDesign/StarIcon";
+// Optimized exports for better tree-shaking
+export { CrossIcon } from "./IconsDesign/CrossIcon";
+export { DeleteIcon } from "./IconsDesign/DeleteIcon";
+export { DiscordIcon } from "./IconsDesign/Discord";
+export { GithubIcon } from "./IconsDesign/Github";
+export { Logo } from "./IconsDesign/logo";
+export { PlusIcon } from "./IconsDesign/PlusIcon";
+export { ShareIcon } from "./IconsDesign/ShareIcon";
+export { SlackIcon } from "./IconsDesign/Slack";
+export { TwitterIcon } from "./IconsDesign/TwitterIcon";
+export { YoutubeIcon } from "./IconsDesign/YoutubeIcon";
+export { UserIcon } from "./IconsDesign/UserIcon";
+export { ArchiveIcon } from "./IconsDesign/ArchiveIcon";
+export { CalendarIcon } from "./IconsDesign/CalendarIcon";
+export { LogOutIcon } from "./IconsDesign/LogoutIcon";
+export { SearchIcon } from "./IconsDesign/SearchIcon";
+export { MoonIcon } from "./IconsDesign/MoonIcon";
+export { SunIcon } from "./IconsDesign/SunIcon";
+export { ChevronDownIcon } from "./IconsDesign/ChevronDownIcon";
+export { EditIcon } from "./IconsDesign/EditIcon";
+export { StarIcon } from "./IconsDesign/StarIcon";
+export { FeedIcon } from "./IconsDesign/FeedIcon";
+export { DiscoverIcon } from "./IconsDesign/DiscoverIcon";
+export { BellIcon } from "./IconsDesign/BellIcon";
+export { CheckCircleIcon } from "./IconsDesign/CheckCircleIcon";
+export { FollowersIcon } from "./IconsDesign/FollowersIcon";
 
-export {
-  CrossIcon,
-  DeleteIcon,
-  DiscordIcon,
-  GithubIcon,
-  Logo,
-  PlusIcon,
-  ShareIcon,
-  SlackIcon,
-  TwitterIcon,
-  YoutubeIcon,
-  UserIcon,
-  ArchiveIcon,
-  CalendarIcon,
-  LogOutIcon,
-  SearchIcon,
-  MoonIcon,
-  SunIcon,
-  ChevronDownIcon,
-  EditIcon,
-  StarIcon,
-};

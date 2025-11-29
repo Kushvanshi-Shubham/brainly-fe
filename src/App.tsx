@@ -8,9 +8,15 @@ import { useTheme } from "./hooks/useThemes";
 import Dashboard from "./pages/dashboard";
 import SocialFeed from "./pages/SocialFeed";
 import Explore from "./pages/Explore";
+import Collections from "./pages/Collections";
+import CollectionDetail from "./pages/CollectionDetail";
 import { MainLayout } from "./Layouts/MainLayout";
 import Profile from "./pages/Auth/Profile";
+import UserProfile from "./pages/Auth/UserProfile";
+import Discover from "./pages/Discover";
+import { ActivityFeed } from "./pages/Activity";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { BackendStatusNotification } from "./components/BackendStatusNotification";
 
 
 
@@ -20,6 +26,7 @@ function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+        <BackendStatusNotification />
         <Toaster position="top-center" reverseOrder={false} />
         <Routes>
        
@@ -38,7 +45,12 @@ function App() {
           <Route path="/feed" element={<SocialFeed />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/collections" element={<Collections />} />
+          <Route path="/collections/:id" element={<CollectionDetail />} />
+          <Route path="/discover" element={<Discover />} />
+          <Route path="/activity" element={<ActivityFeed />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/user/:userId" element={<UserProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>

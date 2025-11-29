@@ -45,11 +45,16 @@ export function Login() {
       toast.success("Login successful!");
       navigate("/feed");
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 401 || error.response.status === 403) {
-          toast.error("Invalid username/email or password.");
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // Backend returned an error response
+          const message = error.response.data?.message || "An error occurred";
+          toast.error(message);
+        } else if (error.request) {
+          // Request was made but no response (backend down)
+          toast.error("Cannot connect to server. Please ensure the backend is running.");
         } else {
-          toast.error("An unexpected error occurred. Please try again later.");
+          toast.error("An unexpected error occurred.");
         }
       } else {
         toast.error("Network error. Please check your internet connection.");

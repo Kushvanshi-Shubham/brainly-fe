@@ -1,4 +1,4 @@
-import { useEffect, useRef, memo } from "react";
+import { useEffect, useRef, memo, useState } from "react";
 import { getEmbedUrl, getPlatformMeta, type ContentType } from "../../utlis/contentTypeDetection";
 
 interface EmbedPreviewProps {
@@ -7,35 +7,88 @@ interface EmbedPreviewProps {
   title: string;
 }
 
+// Loading skeleton component
+const LoadingSkeleton = ({ icon }: { icon: string }) => (
+  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 animate-pulse">
+    <div className="text-center">
+      <div className="text-4xl mb-3">{icon}</div>
+      <div className="text-sm text-gray-500 dark:text-gray-400">Loading preview...</div>
+    </div>
+  </div>
+);
+
+// Error fallback component
+const ErrorFallback = ({ url }: { url: string }) => (
+  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+    <div className="text-center p-4">
+      <div className="text-4xl mb-3">⚠️</div>
+      <div className="text-sm text-gray-700 dark:text-gray-300 font-medium mb-2">Failed to load preview</div>
+      <a 
+        href={url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-xs text-purple-600 dark:text-purple-400 hover:underline"
+      >
+        Open link directly →
+      </a>
+    </div>
+  </div>
+);
+
 const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const embedUrl = getEmbedUrl(url, type);
   const platformMeta = getPlatformMeta(type);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
+    // Reset states when URL changes
+    setIsLoading(true);
+    setHasError(false);
+
     // Load Twitter widget
     const win = globalThis as typeof globalThis & { twttr?: { widgets: { load: (el?: HTMLElement) => void } } };
     if (type === 'twitter' && win.twttr) {
       win.twttr.widgets.load(containerRef.current || undefined);
+      // Twitter doesn't provide load callback, use timeout
+      setTimeout(() => setIsLoading(false), 2000);
     }
     
     // Load Instagram embed script
     const winInsta = globalThis as typeof globalThis & { instgrm?: { Embeds: { process: () => void } } };
     if (type === 'instagram' && winInsta.instgrm) {
       winInsta.instgrm.Embeds.process();
+      // Instagram doesn't provide load callback, use timeout
+      setTimeout(() => setIsLoading(false), 2000);
     }
+
+    // Set loading timeout for other embed types
+    const loadTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(loadTimeout);
   }, [type, url]);
 
   // YouTube & Shorts
   if (type === 'youtube' && embedUrl) {
     return (
       <div className="relative w-full aspect-video rounded-t-xl overflow-hidden bg-black shadow-inner">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
+        {hasError && <ErrorFallback url={url} />}
         <iframe
           src={embedUrl}
           title={title}
           className="w-full h-full"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           allowFullScreen
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+            setHasError(true);
+          }}
+          loading="lazy"
         />
       </div>
     );
@@ -44,7 +97,8 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   // Twitter/X
   if (type === 'twitter') {
     return (
-      <div ref={containerRef} className="w-full">
+      <div ref={containerRef} className="relative w-full">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
         <blockquote className="twitter-tweet" data-theme="dark">
           <a href={url}>Loading tweet...</a>
         </blockquote>
@@ -55,12 +109,13 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   // Instagram
   if (type === 'instagram' && embedUrl) {
     return (
-      <div className="w-full flex justify-center bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-850 rounded-t-xl overflow-hidden py-4">
+      <div className="relative w-full max-h-[600px] flex justify-center bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-850 rounded-t-xl overflow-hidden py-4">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
         <blockquote 
           className="instagram-media" 
           data-instgrm-permalink={url}
           data-instgrm-version="14"
-          style={{ maxWidth: '540px', width: '100%', margin: 0 }}
+          style={{ maxWidth: '540px', width: '100%', margin: 0, maxHeight: '600px', overflow: 'hidden' }}
         >
           <a href={url} target="_blank" rel="noopener noreferrer">
             View on Instagram
@@ -74,12 +129,15 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   if (type === 'tiktok' && embedUrl) {
     return (
       <div className="relative w-full max-w-md mx-auto aspect-[9/16] rounded-t-xl overflow-hidden bg-black shadow-inner">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
         <iframe
           src={embedUrl}
           title={title}
           className="w-full h-full"
           allow="encrypted-media"
           allowFullScreen
+          onLoad={() => setIsLoading(false)}
+          loading="lazy"
         />
       </div>
     );
@@ -88,13 +146,16 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   // Spotify
   if (type === 'spotify' && embedUrl) {
     return (
-      <div className="w-full rounded-t-xl overflow-hidden bg-gradient-to-b from-green-50 to-gray-50 dark:from-gray-800 dark:to-gray-850">
+      <div className="relative w-full rounded-t-xl overflow-hidden bg-gradient-to-b from-green-50 to-gray-50 dark:from-gray-800 dark:to-gray-850">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
         <iframe
           src={embedUrl}
           title={title}
           className="w-full h-80"
           allow="encrypted-media"
           allowFullScreen
+          onLoad={() => setIsLoading(false)}
+          loading="lazy"
         />
       </div>
     );
@@ -104,12 +165,15 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   if (type === 'vimeo' && embedUrl) {
     return (
       <div className="relative w-full aspect-video rounded-t-xl overflow-hidden bg-black shadow-inner">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
         <iframe
           src={embedUrl}
           title={title}
           className="w-full h-full"
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
+          onLoad={() => setIsLoading(false)}
+          loading="lazy"
         />
       </div>
     );
@@ -119,11 +183,14 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   if (type === 'codepen' && embedUrl) {
     return (
       <div className="relative w-full aspect-video rounded-t-xl overflow-hidden bg-gray-900 shadow-inner">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
         <iframe
           src={embedUrl}
           title={title}
           className="w-full h-full"
           allowFullScreen
+          onLoad={() => setIsLoading(false)}
+          loading="lazy"
         />
       </div>
     );
@@ -132,12 +199,15 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   // Twitch
   if (type === 'twitch' && embedUrl) {
     return (
-      <div className="relative w-full aspect-video rounded-t-xl overflow-hidden bg-black shadow-inner">
+      <div className="relative w-full aspect-video rounded-t-xl overflow-hidden bg-purple-900/10 dark:bg-purple-900/20 shadow-inner">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
         <iframe
           src={embedUrl}
           title={title}
           className="w-full h-full"
           allowFullScreen
+          onLoad={() => setIsLoading(false)}
+          loading="lazy"
         />
       </div>
     );
@@ -146,7 +216,8 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
   // SoundCloud (requires oEmbed API - simplified version)
   if (type === 'soundcloud') {
     return (
-      <div className="w-full rounded-t-xl overflow-hidden bg-gradient-to-b from-orange-50 to-gray-50 dark:from-gray-800 dark:to-gray-850 p-4">
+      <div className="relative w-full rounded-t-xl overflow-hidden bg-gradient-to-b from-orange-50 to-gray-50 dark:from-gray-800 dark:to-gray-850 p-4">
+        {isLoading && <LoadingSkeleton icon={platformMeta.icon} />}
         <iframe
           width="100%"
           height="166"
@@ -154,6 +225,8 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
           allow="autoplay"
           src={`https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`}
           className="rounded-lg"
+          onLoad={() => setIsLoading(false)}
+          loading="lazy"
         />
       </div>
     );

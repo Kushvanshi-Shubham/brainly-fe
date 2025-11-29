@@ -37,22 +37,18 @@ export function useContent(): UseContentResult {
 
 
   const fetchContents = useCallback(async (silent = false) => {
-    if (!silent) {
-      setLoading(true);
-    }
+    if (!silent) setLoading(true);
+    
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found.");
-      }
+      if (!token) throw new Error("No authentication token found.");
 
-      const response = await axios.get<{ content: ContentItem[] }>(`${BACKEND_URL}/api/v1/content`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      setContents(response.data.content);
+      const { data } = await axios.get<{ content: ContentItem[] }>(
+        `${BACKEND_URL}/api/v1/content`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setContents(data.content || []);
     } catch (err: unknown) {
       console.error("Failed to fetch content:", err);
       if (axios.isAxiosError(err)) {
@@ -63,35 +59,24 @@ export function useContent(): UseContentResult {
         setError("An unexpected error occurred while loading content.");
       }
     } finally {
-      if (!silent) {
-        setLoading(false);
-      }
+      if (!silent) setLoading(false);
     }
   }, []); 
 
-  const refresh = useCallback(() => {
-    fetchContents(false); // Explicit refresh shows loading
-  }, [fetchContents]);
+  const refresh = useCallback(() => fetchContents(false), [fetchContents]);
 
 
   useEffect(() => {
-    fetchContents(false); // Initial load shows loading
+    fetchContents(false);
 
-    // Refresh on window focus (like Twitter/LinkedIn)
-    const handleFocus = () => {
-      fetchContents(true); // Silent refresh when user comes back
-    };
+    const handleFocus = () => fetchContents(true);
+    const handleContentChange = () => fetchContents(true);
     
-    // Refresh when content is modified (create/edit/delete)
-    const handleContentChange = () => {
-      fetchContents(true); // Silent refresh after user action
-    };
-    
-    globalThis.addEventListener('focus', handleFocus);
+    window.addEventListener('focus', handleFocus);
     globalThis.addEventListener('content-updated', handleContentChange);
 
     return () => {
-      globalThis.removeEventListener('focus', handleFocus);
+      window.removeEventListener('focus', handleFocus);
       globalThis.removeEventListener('content-updated', handleContentChange);
     };
   }, [fetchContents]); 

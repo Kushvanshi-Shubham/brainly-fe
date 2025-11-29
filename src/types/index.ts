@@ -71,3 +71,33 @@ export interface SearchFilters {
   types: string[];
   tags: Tag[];
 }
+
+export interface Collection {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+  contentCount: number;
+  contentPreview?: Content[];
+  content?: Content[];
+  isPrivate: boolean;
+  order: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface Collection {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+  contentCount: number;
+  contentPreview?: Content[];
+  content?: Content[];
+  isPrivate: boolean;
+  order: number;
+  createdAt: string;
+  updatedAt?: string;
+}

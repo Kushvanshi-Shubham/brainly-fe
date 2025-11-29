@@ -140,37 +140,37 @@ export const getEmbedUrl = (url: string, type: ContentType): string | null => {
   switch (type) {
     case 'youtube': {
       // Handle regular videos and shorts
-      const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|v\/|shorts\/)([\w-]{11})/);
+      const videoIdMatch = (/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|v\/|shorts\/)([\w-]{11})/).exec(url);
       return videoIdMatch ? `https://www.youtube.com/embed/${videoIdMatch[1]}` : null;
     }
     
     case 'instagram': {
       // Instagram embeds work with /embed/ path
-      const match = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(p|reel)\/([A-Za-z0-9_-]+)/);
+      const match = (/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(p|reel)\/([A-Za-z0-9_-]+)/).exec(url);
       return match ? `https://www.instagram.com/p/${match[2]}/embed/` : null;
     }
     
     case 'tiktok': {
       // TikTok embeds
-      const match = url.match(/(?:https?:\/\/)?(?:www\.|vm\.)?tiktok\.com\/(?:@[\w.-]+\/video\/|v\/)?(\d+)/);
+      const match = (/(?:https?:\/\/)?(?:www\.|vm\.)?tiktok\.com\/(?:@[\w.-]+\/video\/|v\/)?(\d+)/).exec(url);
       return match ? `https://www.tiktok.com/embed/v2/${match[1]}` : null;
     }
     
     case 'spotify': {
       // Spotify embeds
-      const match = url.match(/(?:https?:\/\/)?open\.spotify\.com\/(track|album|playlist|episode)\/([a-zA-Z0-9]+)/);
+      const match = (/(?:https?:\/\/)?open\.spotify\.com\/(track|album|playlist|episode)\/([a-zA-Z0-9]+)/).exec(url);
       return match ? `https://open.spotify.com/embed/${match[1]}/${match[2]}` : null;
     }
     
     case 'vimeo': {
       // Vimeo embeds
-      const match = url.match(/(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(\d+)/);
+      const match = (/(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(\d+)/).exec(url);
       return match ? `https://player.vimeo.com/video/${match[1]}` : null;
     }
     
     case 'codepen': {
       // CodePen embeds
-      const match = url.match(/(?:https?:\/\/)?codepen\.io\/([^/]+)\/pen\/([^/]+)/);
+      const match = (/(?:https?:\/\/)?codepen\.io\/([^/]+)\/pen\/([^/]+)/).exec(url);
       return match ? `https://codepen.io/${match[1]}/embed/${match[2]}?default-tab=result` : null;
     }
     
@@ -181,11 +181,11 @@ export const getEmbedUrl = (url: string, type: ContentType): string | null => {
     
     case 'twitch': {
       // Twitch embeds
-      const channelMatch = url.match(/(?:https?:\/\/)?(?:www\.)?twitch\.tv\/([^/]+)/);
+      const channelMatch = (/(?:https?:\/\/)?(?:www\.)?twitch\.tv\/([^/]+)/).exec(url);
       if (channelMatch) {
         return `https://player.twitch.tv/?channel=${channelMatch[1]}&parent=${globalThis.location.hostname}`;
       }
-      const videoMatch = url.match(/(?:https?:\/\/)?(?:www\.)?twitch\.tv\/videos\/(\d+)/);
+      const videoMatch = (/(?:https?:\/\/)?(?:www\.)?twitch\.tv\/videos\/(\d+)/).exec(url);
       return videoMatch ? `https://player.twitch.tv/?video=${videoMatch[1]}&parent=${globalThis.location.hostname}` : null;
     }
     
