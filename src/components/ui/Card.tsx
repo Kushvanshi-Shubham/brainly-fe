@@ -128,7 +128,7 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
       exit={{ opacity: 0, y: -20 }}
       whileHover={{ y: -4 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border border-gray-200 dark:border-gray-700"
+      className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border border-gray-200 dark:border-gray-700 will-change-transform"
     >
       {/* Embed preview - Full width at top */}
       <div className="w-full max-h-[600px] overflow-hidden">

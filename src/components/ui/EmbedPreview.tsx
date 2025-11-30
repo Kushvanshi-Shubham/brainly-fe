@@ -1,5 +1,6 @@
 import { useEffect, useRef, memo, useState } from "react";
 import { getEmbedUrl, getPlatformMeta, type ContentType } from "../../utlis/contentTypeDetection";
+import { LinkPreview } from "./LinkPreview";
 
 interface EmbedPreviewProps {
   url: string;
@@ -232,40 +233,8 @@ const EmbedPreviewComponent = ({ url, type, title }: EmbedPreviewProps) => {
     );
   }
 
-  // LinkedIn, Reddit, Medium, GitHub, Facebook, Pinterest - Show link preview card
-  return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block w-full group"
-    >
-      <div 
-        className="relative overflow-hidden rounded-t-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 h-48 flex items-center justify-center transition-transform group-hover:scale-[1.02]"
-        style={{ 
-          background: `linear-gradient(135deg, ${platformMeta.color}15, ${platformMeta.color}05)`
-        }}
-      >
-        <div className="text-center">
-          <div className="text-6xl mb-3">{platformMeta.icon}</div>
-          <div 
-            className="text-sm font-bold uppercase tracking-widest px-4 py-2 rounded-full bg-white/90 dark:bg-gray-900/90 inline-block"
-            style={{ color: platformMeta.color }}
-          >
-            {type}
-          </div>
-        </div>
-        
-        {/* Decorative corner accent */}
-        <div 
-          className="absolute top-0 right-0 w-32 h-32 opacity-20"
-          style={{ 
-            background: `radial-gradient(circle at top right, ${platformMeta.color}, transparent)`
-          }}
-        />
-      </div>
-    </a>
-  );
+  // LinkedIn, Reddit, Medium, GitHub, Facebook, Pinterest - Show link preview
+  return <LinkPreview url={url} title={title} />;
 };
 
 // Memoize to prevent iframe reloads (keeps videos playing, music playing during refresh)
