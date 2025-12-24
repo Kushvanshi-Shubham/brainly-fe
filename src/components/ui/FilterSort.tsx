@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
+import { cn } from "../../utlis/cn";
 
 interface FilterSortProps {
   typeFilter: string;
@@ -11,6 +12,18 @@ interface FilterSortProps {
   showArchived: boolean;
   setShowArchived: (show: boolean) => void;
 }
+
+const selectClasses = cn(
+  "w-full px-4 py-2.5 rounded-xl text-sm",
+  "bg-white/80 dark:bg-gray-800/80",
+  "backdrop-blur-sm",
+  "border border-gray-200 dark:border-gray-700",
+  "text-gray-900 dark:text-white",
+  "focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500",
+  "hover:border-purple-300 dark:hover:border-purple-600",
+  "outline-none transition-all duration-200",
+  "cursor-pointer"
+);
 
 const FilterSort = memo(({
   typeFilter,
@@ -26,18 +39,24 @@ const FilterSort = memo(({
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-6"
+      className={cn(
+        "rounded-2xl p-5 mb-6",
+        "bg-white/70 dark:bg-gray-800/70",
+        "backdrop-blur-xl",
+        "border border-gray-200/50 dark:border-gray-700/50",
+        "shadow-sm shadow-gray-200/20 dark:shadow-black/10"
+      )}
     >
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Type Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
             Filter by Type
           </label>
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none text-sm"
+            className={selectClasses}
           >
             <option value="all">All Types</option>
             <optgroup label="Social Media">
@@ -74,13 +93,13 @@ const FilterSort = memo(({
 
         {/* Sort By */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
             Sort By
           </label>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none text-sm"
+            className={selectClasses}
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -92,21 +111,23 @@ const FilterSort = memo(({
         <div className="md:col-span-2 flex items-end gap-3">
           <button
             onClick={() => setShowFavorites(!showFavorites)}
-            className={`flex-1 px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+            className={cn(
+              "flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200",
               showFavorites
-                ? 'bg-yellow-500 text-white hover:bg-yellow-600'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-            }`}
+                ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-lg shadow-amber-500/25 hover:shadow-xl"
+                : "bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600/50 border border-gray-200/50 dark:border-gray-600/50"
+            )}
           >
             ⭐ {showFavorites ? 'Showing' : 'Show'} Favorites
           </button>
           <button
             onClick={() => setShowArchived(!showArchived)}
-            className={`flex-1 px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+            className={cn(
+              "flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200",
               showArchived
-                ? 'bg-purple-500 text-white hover:bg-purple-600'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-            }`}
+                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl"
+                : "bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600/50 border border-gray-200/50 dark:border-gray-600/50"
+            )}
           >
             📦 {showArchived ? 'Showing' : 'Show'} Archived
           </button>

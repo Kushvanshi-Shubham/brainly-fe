@@ -5,12 +5,14 @@ import toast from "react-hot-toast";
 import { BACKEND_URL } from "../config";
 import { Spinner } from "../components/ui/Spinner";
 import { Avatar } from "../components/ui/Avatar";
-import { CalendarIcon, FeedIcon } from "../Icons/IconsImport";
+import { CalendarIcon } from "../Icons/IconsImport";
 import { EmbedPreview } from "../components/ui/EmbedPreview";
 import { getPlatformMeta, type ContentType } from "../utlis/contentTypeDetection";
 import type { Content } from "../types";
 import { useNavigate } from "react-router-dom";
 import { FollowButton } from "../components/ui/FollowButton";
+import { UserGroupIcon, InboxIcon, FireIcon, HashtagIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+import { cn } from "../utlis/cn";
 
 interface SocialFeedContent extends Content {
   userDetails?: {
@@ -92,48 +94,68 @@ const SocialFeed = () => {
 
   if (stats.followingCount === 0) {
     return (
-      <div className="min-h-screen px-4 py-8">
-        <div className="max-w-4xl mx-auto text-center py-16">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="text-center max-w-md"
+        >
+          <div className={cn(
+            "w-20 h-20 mx-auto mb-6 rounded-full",
+            "bg-gradient-to-br from-purple-100 to-pink-100",
+            "dark:from-purple-900/30 dark:to-pink-900/30",
+            "flex items-center justify-center"
+          )}>
+            <UserGroupIcon className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+          </div>
+          <h3 className="text-2xl font-bold gradient-text mb-3">
+            No Social Feed Yet
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
+            Follow people to see their content in your social feed
+          </p>
+          <button
+            onClick={() => navigate("/discover")}
+            className={cn(
+              "px-6 py-3 rounded-xl font-semibold",
+              "bg-gradient-to-r from-purple-600 to-pink-600",
+              "hover:from-purple-700 hover:to-pink-700",
+              "text-white transition-all duration-200",
+              "shadow-lg hover:shadow-xl active:scale-95"
+            )}
           >
-            <div className="text-6xl mb-6">👥</div>
-            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-              No Social Feed Yet
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Follow people to see their content in your social feed
-            </p>
-            <button
-              onClick={() => navigate("/discover")}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
-            >
-              Discover People
-            </button>
-          </motion.div>
-        </div>
+            Discover People
+          </button>
+        </motion.div>
       </div>
     );
   }
 
   if (feed.length === 0 && stats.followingCount > 0) {
     return (
-      <div className="min-h-screen px-4 py-8">
-        <div className="max-w-4xl mx-auto text-center py-16">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <div className="text-6xl mb-6">📭</div>
-            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-              Feed is Empty
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              The people you follow haven't saved any content yet
-            </p>
-          </motion.div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="text-center max-w-md"
+        >
+          <div className={cn(
+            "w-20 h-20 mx-auto mb-6 rounded-full",
+            "bg-gradient-to-br from-purple-100 to-pink-100",
+            "dark:from-purple-900/30 dark:to-pink-900/30",
+            "flex items-center justify-center"
+          )}>
+            <InboxIcon className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+          </div>
+          <h3 className="text-2xl font-bold gradient-text mb-3">
+            Feed is Empty
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            The people you follow haven't saved any content yet
+          </p>
+        </motion.div>
       </div>
     );
   }
@@ -145,13 +167,13 @@ const SocialFeed = () => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
         >
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-            <FeedIcon className="w-10 h-10 text-purple-600 dark:text-purple-400" />{" "}
+          <h1 className="text-4xl font-bold gradient-text mb-2">
             Social Feed
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Content from {stats.followingCount} people you follow
+            Content from {stats.followingCount} {stats.followingCount === 1 ? 'person' : 'people'} you follow
           </p>
         </motion.div>
 
@@ -159,21 +181,24 @@ const SocialFeed = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl p-6 text-white shadow-xl"
+          transition={{ delay: 0.1, duration: 0.4 }}
+          className={cn(
+            "glass border border-purple-200/50 dark:border-purple-800/30",
+            "rounded-2xl p-6 shadow-xl"
+          )}
         >
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div>
-              <div className="text-3xl font-bold">{stats.totalItems}</div>
-              <div className="text-sm opacity-90">Total Items</div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold gradient-text">{stats.totalItems}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Items</div>
             </div>
-            <div>
-              <div className="text-3xl font-bold">{stats.followingCount}</div>
-              <div className="text-sm opacity-90">Following</div>
+            <div className="text-center">
+              <div className="text-3xl font-bold gradient-text">{stats.followingCount}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Following</div>
             </div>
-            <div className="col-span-2 md:col-span-1">
-              <div className="text-3xl font-bold">{trending.length}</div>
-              <div className="text-sm opacity-90">Trending This Week</div>
+            <div className="text-center col-span-2 md:col-span-1">
+              <div className="text-3xl font-bold gradient-text">{trending.length}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Trending</div>
             </div>
           </div>
         </motion.div>
@@ -183,11 +208,12 @@ const SocialFeed = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                🔥 Trending This Week
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
+                <FireIcon className="w-6 h-6 text-orange-500" />
+                Trending This Week
               </h2>
               <p className="text-gray-600 dark:text-gray-400">Recent saves from your network</p>
             </div>
@@ -204,21 +230,28 @@ const SocialFeed = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
+            transition={{ delay: 0.3, duration: 0.4 }}
+            className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
           >
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              📌 Popular Tags
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
+              <HashtagIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              Popular Tags
             </h2>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2">
               {popularTags.map((tag) => (
                 <button
                   key={tag._id}
                   onClick={() => navigate(`/explore?tag=${encodeURIComponent(tag._id)}`)}
-                  className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-sm font-medium",
+                    "bg-purple-100 dark:bg-purple-900/30",
+                    "text-purple-700 dark:text-purple-300",
+                    "hover:bg-purple-200 dark:hover:bg-purple-900/50",
+                    "transition-all duration-200 active:scale-95"
+                  )}
                   title={`Explore content tagged with ${tag._id}`}
                 >
-                  #{tag._id} ({tag.count})
+                  #{tag._id} <span className="opacity-60">({tag.count})</span>
                 </button>
               ))}
             </div>
@@ -229,11 +262,12 @@ const SocialFeed = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
         >
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              📚 All Content
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
+              <RectangleStackIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              All Content
             </h2>
             <p className="text-gray-600 dark:text-gray-400">Latest saves from your network</p>
           </div>
@@ -262,11 +296,16 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
     <motion.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="bg-white dark:bg-gray-900 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-800"
+      transition={{ delay: index * 0.03, duration: 0.3 }}
+      className={cn(
+        "glass border border-purple-200/50 dark:border-purple-800/30",
+        "rounded-2xl shadow-lg hover:shadow-xl",
+        "transition-all duration-300 overflow-hidden",
+        "hover:scale-[1.02]"
+      )}
     >
       {/* User Header */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+      <div className="p-4 border-b border-gray-200/50 dark:border-gray-800/50">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate(`/user/${item.userDetails?._id}`)}
@@ -299,34 +338,34 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
       </div>
 
       {/* Content Section */}
-      <div className="p-5">
-        {/* Platform Badge */}
-        <div className="mb-3">
-          <span
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-md"
-            style={{ backgroundColor: platformMeta.color }}
+      <div className="p-5 space-y-4">
+        {/* Title and Platform Badge */}
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-2">
+            {item.title && (
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 flex-1">
+                {item.title}
+              </h2>
+            )}
+            <span
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold text-white shadow-sm flex-shrink-0"
+              style={{ backgroundColor: platformMeta.color }}
+            >
+              <span>{platformMeta.icon}</span>
+              <span>{item.type}</span>
+            </span>
+          </div>
+          
+          {/* Link - Only show domain */}
+          <a
+            href={item.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors line-clamp-1 block"
           >
-            <span>{platformMeta.icon}</span>
-            <span>{item.type}</span>
-          </span>
+            {new URL(item.link).hostname.replace('www.', '')}
+          </a>
         </div>
-
-        {/* Title */}
-        {item.title && (
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
-            {item.title}
-          </h2>
-        )}
-
-        {/* Link */}
-        <a
-          href={item.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 dark:text-blue-400 hover:underline text-sm line-clamp-1 mb-3 block"
-        >
-          {item.link}
-        </a>
 
         {/* Tags */}
         {item.tags && item.tags.length > 0 && (
@@ -338,7 +377,13 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
                 <button
                   key={tagId}
                   onClick={() => navigate(`/explore?tag=${encodeURIComponent(tagName)}`)}
-                  className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md text-xs font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                  className={cn(
+                    "px-2 py-1 rounded-md text-xs font-medium",
+                    "bg-purple-100 dark:bg-purple-900/30",
+                    "text-purple-700 dark:text-purple-300",
+                    "hover:bg-purple-200 dark:hover:bg-purple-900/50",
+                    "transition-colors active:scale-95"
+                  )}
                   title={`Explore content tagged with ${tagName}`}
                 >
                   #{tagName}
@@ -346,8 +391,8 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
               );
             })}
             {item.tags.length > 3 && (
-              <span className="px-2 py-1 text-gray-500 text-xs">
-                +{item.tags.length - 3} more
+              <span className="px-2 py-1 text-gray-500 dark:text-gray-400 text-xs">
+                +{item.tags.length - 3}
               </span>
             )}
           </div>
@@ -358,11 +403,18 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
           href={item.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+          className={cn(
+            "w-full inline-flex items-center justify-center gap-2",
+            "px-4 py-2.5 rounded-xl font-medium text-sm",
+            "bg-gradient-to-r from-purple-600 to-pink-600",
+            "hover:from-purple-700 hover:to-pink-700",
+            "text-white transition-all duration-200",
+            "shadow-md hover:shadow-lg active:scale-95"
+          )}
         >
           View Content
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
         </a>
       </div>

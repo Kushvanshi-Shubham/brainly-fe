@@ -68,7 +68,7 @@ export const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) 
       
         <DialogContext.Provider value={{ onOpenChange }}>
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
             onClick={() => onOpenChange(false)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -112,8 +112,12 @@ export const DialogContent: React.FC<DialogContentProps> = ({
   return (
     <div
       className={cn(
-        "w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 relative",
-        "border border-gray-200 dark:border-gray-700",
+        "w-full max-w-md p-6 relative",
+        "bg-white/95 dark:bg-gray-800/95",
+        "backdrop-blur-xl",
+        "rounded-2xl",
+        "shadow-2xl shadow-gray-900/20 dark:shadow-black/40",
+        "border border-gray-200/50 dark:border-gray-700/50",
         className
       )}
       aria-labelledby={ariaLabelledby}
@@ -121,7 +125,13 @@ export const DialogContent: React.FC<DialogContentProps> = ({
     >
       {showCloseButton && (
         <button
-          className="absolute top-3 right-3 p-1 rounded-full text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className={cn(
+            "absolute top-4 right-4 p-2 rounded-xl",
+            "text-gray-400 dark:text-gray-500",
+            "hover:text-gray-600 dark:hover:text-gray-300",
+            "hover:bg-gray-100 dark:hover:bg-gray-700/50",
+            "transition-all duration-200"
+          )}
           aria-label="Close dialog"
 
           onClick={() => onOpenChange(false)}
@@ -143,14 +153,14 @@ export const DialogHeader: React.FC<DialogHeaderProps> = ({ children, className 
 );
 
 export const DialogTitle: React.FC<DialogTitleProps> = ({ children, className, id }) => (
-  <h2 className={cn("text-xl font-semibold text-gray-900 dark:text-white", className)} id={id}>
+  <h2 className={cn("text-xl font-bold text-gray-900 dark:text-white", className)} id={id}>
     {children}
   </h2>
 );
 
 export const DialogFooter: React.FC<DialogFooterProps> = ({ children, className }) => (
   <div className={cn(
-    "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-4 border-t border-gray-100 dark:border-gray-700 mt-4",
+    "flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-gray-200/50 dark:border-gray-700/50 mt-4",
     className
   )}>
     {children}

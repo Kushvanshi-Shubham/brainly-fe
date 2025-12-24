@@ -17,29 +17,48 @@ const SidebarComponent = ({ collapsed, setCollapsed }: SidebarProps) => {
   return (
     <div
       className={cn(
-        "bg-white dark:bg-gray-900 fixed top-0 left-0 h-screen border-r border-gray-200 dark:border-gray-700 transition-all duration-300 z-20",
-        collapsed ? "w-20 px-2" : "w-64 px-4",
+        "fixed top-0 left-0 h-screen z-20 transition-all duration-300 ease-out",
+        "bg-white/80 dark:bg-gray-900/90 backdrop-blur-xl",
+        "border-r border-gray-200/50 dark:border-gray-700/50",
+        "shadow-lg shadow-gray-200/20 dark:shadow-black/20",
+        collapsed ? "w-20 px-3" : "w-64 px-4",
         "flex flex-col"
       )}
     >
-      {/* Header Section */}
-      <div className="flex items-center justify-between py-4 mb-8 h-16">
-        <Link to="/feed" className="flex items-center gap-2 text-2xl font-semibold text-purple-600 dark:text-purple-400">
-          <Logo className="w-8 h-8 flex-shrink-0" />
-          {!collapsed && <span className="whitespace-nowrap transition-opacity duration-300">Brainly</span>}
+      {/* Header Section with Gradient */}
+      <div className="flex items-center justify-between py-5 mb-6 h-16">
+        <Link 
+          to="/feed" 
+          className="flex items-center gap-3 group"
+        >
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+            <Logo className="relative w-9 h-9 flex-shrink-0 text-purple-600 dark:text-purple-400" />
+          </div>
+          {!collapsed && (
+            <span className="text-xl font-bold gradient-text whitespace-nowrap">
+              Brainly
+            </span>
+          )}
         </Link>
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-gray-600 dark:text-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-md p-1"
+          className={cn(
+            "p-2 rounded-lg transition-all duration-200",
+            "text-gray-500 dark:text-gray-400",
+            "hover:bg-purple-100 dark:hover:bg-purple-900/30",
+            "hover:text-purple-600 dark:hover:text-purple-400",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+          )}
           title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
-          <SideToggle className="w-6 h-6" />
+          <SideToggle className={cn("w-5 h-5 transition-transform duration-300", collapsed && "rotate-180")} />
         </button>
       </div>
 
       {/* Navigation Section */}
-      <nav className="flex-grow space-y-2 text-gray-700 dark:text-gray-300 text-base">
+      <nav className="flex-grow space-y-1.5">
         <SidebarItem
           text="Feed"
           icon={<FeedIcon className="w-5 h-5" />}
@@ -80,7 +99,7 @@ const SidebarComponent = ({ collapsed, setCollapsed }: SidebarProps) => {
             <div className="relative">
               <BellIcon className="w-5 h-5" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-lg animate-pulse">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -97,12 +116,13 @@ const SidebarComponent = ({ collapsed, setCollapsed }: SidebarProps) => {
         />
       </nav>
 
-      {/* Footer / Profile Section */}
+      {/* Footer Section */}
       <div className="py-4 mt-auto">
-        
         {!collapsed && (
-          <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700 text-center text-xs text-gray-400 dark:text-gray-500">
-            © {new Date().getFullYear()} Brainly
+          <div className="pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+            <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+              © {new Date().getFullYear()} Brainly
+            </p>
           </div>
         )}
       </div>

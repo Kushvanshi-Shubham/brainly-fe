@@ -8,6 +8,8 @@ import { Spinner } from "../components/ui/Spinner";
 import { SearchIcon, CalendarIcon, ShareIcon } from "../Icons/IconsImport";
 import type { Content, DiscoveryData, SearchFilters } from "../types";
 import { getPlatformMeta, type ContentType } from "../utlis/contentTypeDetection";
+import { FireIcon, MagnifyingGlassIcon, ChartBarIcon, CubeIcon, HashtagIcon, ClockIcon } from "@heroicons/react/24/outline";
+import { cn } from "../utlis/cn";
 
 const Explore = () => {
   const [searchParams] = useSearchParams();
@@ -142,16 +144,18 @@ const Explore = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex gap-2 mb-6 border-b border-gray-200/50 dark:border-gray-700/50">
           <button
             onClick={() => setActiveTab("discover")}
-            className={`px-6 py-3 font-semibold transition-colors relative ${
+            className={cn(
+              "px-6 py-3 font-semibold transition-all relative flex items-center gap-2",
               activeTab === "discover"
                 ? "text-purple-600 dark:text-purple-400"
                 : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-            }`}
+            )}
           >
-            🔥 Discover
+            <FireIcon className="w-5 h-5" />
+            Discover
             {activeTab === "discover" && (
               <motion.div
                 layoutId="activeTab"
@@ -161,13 +165,15 @@ const Explore = () => {
           </button>
           <button
             onClick={() => setActiveTab("search")}
-            className={`px-6 py-3 font-semibold transition-colors relative ${
+            className={cn(
+              "px-6 py-3 font-semibold transition-all relative flex items-center gap-2",
               activeTab === "search"
                 ? "text-purple-600 dark:text-purple-400"
                 : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-            }`}
+            )}
           >
-            🔎 Search
+            <MagnifyingGlassIcon className="w-5 h-5" />
+            Search
             {activeTab === "search" && (
               <motion.div
                 layoutId="activeTab"
@@ -198,21 +204,23 @@ const Explore = () => {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg"
+                      transition={{ duration: 0.3 }}
+                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        📊 Activity Overview
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <ChartBarIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                        Activity Overview
                       </h3>
                       <div className="space-y-3">
                         <div className="flex justify-between items-center">
                           <span className="text-gray-600 dark:text-gray-400">This Week</span>
-                          <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                          <span className="text-2xl font-bold gradient-text">
                             {discoveryData.weeklyContent}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-gray-600 dark:text-gray-400">This Month</span>
-                          <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                          <span className="text-2xl font-bold gradient-text">
                             {discoveryData.monthlyContent}
                           </span>
                         </div>
@@ -222,11 +230,12 @@ const Explore = () => {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.1 }}
-                      className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg"
+                      transition={{ delay: 0.1, duration: 0.3 }}
+                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        🎲 Rediscover
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <CubeIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                        Rediscover
                       </h3>
                       {discoveryData.randomItem ? (
                         <div>
@@ -255,8 +264,8 @@ const Explore = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg"
+                    transition={{ delay: 0.2, duration: 0.3 }}
+                    className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
                   >
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                       Content by Type
@@ -265,10 +274,10 @@ const Explore = () => {
                       {discoveryData.typeBreakdown.map((item) => (
                         <div
                           key={item._id}
-                          className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center"
+                          className="glass border border-gray-200/50 dark:border-gray-700/50 rounded-xl p-4 text-center"
                         >
                           <div className="text-3xl mb-2">{getPlatformMeta(item._id as ContentType).icon}</div>
-                          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                          <div className="text-2xl font-bold gradient-text">
                             {item.count}
                           </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
@@ -283,11 +292,12 @@ const Explore = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg"
+                    transition={{ delay: 0.3, duration: 0.3 }}
+                    className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                      🏷️ Popular Tags
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                      <HashtagIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      Popular Tags
                     </h3>
                     {discoveryData.tagStats.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
@@ -316,11 +326,12 @@ const Explore = () => {
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg"
+                      transition={{ delay: 0.4, duration: 0.3 }}
+                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        📅 On This Day
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <ClockIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                        On This Day
                       </h3>
                       <div className="space-y-3">
                         {discoveryData.onThisDay.map((item) => (

@@ -5,6 +5,25 @@ import { collectionsService } from "../services/collectionsService";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "../components/ui/Spinner";
 import {
+  FolderIcon,
+  BookOpenIcon,
+  LightBulbIcon,
+  FireIcon,
+  StarIcon,
+  BriefcaseIcon,
+  PaintBrushIcon,
+  RocketLaunchIcon,
+  MapPinIcon,
+  TrophyIcon,
+  ComputerDesktopIcon,
+  BookmarkIcon,
+  MusicalNoteIcon,
+  FilmIcon,
+  HomeIcon,
+  PlusIcon
+} from "@heroicons/react/24/outline";
+import { cn } from "../utlis/cn";
+import {
   DndContext,
   closestCenter,
   KeyboardSensor,
@@ -23,7 +42,23 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { Collection } from "../types";
 
-const ICON_OPTIONS = ["📁", "📚", "💡", "🎯", "⭐", "🔥", "💼", "🎨", "🚀", "📌", "🏆", "💻", "📖", "🎵", "🎬", "🏠"];
+const ICON_OPTIONS = [
+  { name: "Folder", component: FolderIcon },
+  { name: "Book", component: BookOpenIcon },
+  { name: "LightBulb", component: LightBulbIcon },
+  { name: "Fire", component: FireIcon },
+  { name: "Star", component: StarIcon },
+  { name: "Briefcase", component: BriefcaseIcon },
+  { name: "Paint", component: PaintBrushIcon },
+  { name: "Rocket", component: RocketLaunchIcon },
+  { name: "Pin", component: MapPinIcon },
+  { name: "Trophy", component: TrophyIcon },
+  { name: "Computer", component: ComputerDesktopIcon },
+  { name: "Bookmark", component: BookmarkIcon },
+  { name: "Music", component: MusicalNoteIcon },
+  { name: "Film", component: FilmIcon },
+  { name: "Home", component: HomeIcon }
+];
 const COLOR_OPTIONS = [
   { name: "Purple", value: "#8B5CF6" },
   { name: "Blue", value: "#3B82F6" },
@@ -84,7 +119,7 @@ function SortableCollectionCard({ collection, onClick }: Readonly<SortableCollec
           {/* Content */}
           <div className="relative">
             <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {/* Drag Handle */}
                 <button
                   {...listeners}
@@ -96,7 +131,21 @@ function SortableCollectionCard({ collection, onClick }: Readonly<SortableCollec
                     <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                   </svg>
                 </button>
-                <div className="text-5xl" onClick={onClick}>{collection.icon}</div>
+                <div 
+                  onClick={onClick}
+                  className={cn(
+                    "w-12 h-12 rounded-xl flex items-center justify-center",
+                    "bg-gradient-to-br from-purple-100 to-pink-100",
+                    "dark:from-purple-900/30 dark:to-pink-900/30"
+                  )}
+                  style={{ color: collection.color }}
+                >
+                  {(() => {
+                    const IconOption = ICON_OPTIONS.find(opt => opt.name === collection.icon);
+                    const IconComponent = IconOption?.component || FolderIcon;
+                    return <IconComponent className="w-6 h-6" />;
+                  })()}
+                </div>
               </div>
               {collection.isPrivate && (
                 <div className="bg-gray-800 dark:bg-gray-700 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
@@ -177,7 +226,7 @@ export default function Collections() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLOR_OPTIONS[0].value);
-  const [selectedIcon, setSelectedIcon] = useState(ICON_OPTIONS[0]);
+  const [selectedIcon, setSelectedIcon] = useState(ICON_OPTIONS[0].name);
   const [isPrivate, setIsPrivate] = useState(false);
 
   // Drag and drop sensors
@@ -227,7 +276,7 @@ export default function Collections() {
       setName("");
       setDescription("");
       setSelectedColor(COLOR_OPTIONS[0].value);
-      setSelectedIcon(ICON_OPTIONS[0]);
+      setSelectedIcon(ICON_OPTIONS[0].name);
       setIsPrivate(false);
       setShowCreateModal(false);
     } catch (error) {
@@ -251,7 +300,7 @@ export default function Collections() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold gradient-text">
               My Collections
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -262,11 +311,14 @@ export default function Collections() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium shadow-lg flex items-center gap-2"
+            className={cn(
+              "px-6 py-3 rounded-xl font-medium shadow-lg",
+              "bg-gradient-to-r from-purple-600 to-pink-600",
+              "hover:from-purple-700 hover:to-pink-700",
+              "text-white transition-all flex items-center gap-2"
+            )}
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
+            <PlusIcon className="w-5 h-5" />
             New Collection
           </motion.button>
         </div>
@@ -276,10 +328,18 @@ export default function Collections() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
             className="text-center py-20"
           >
-            <div className="text-6xl mb-4">📁</div>
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-2">
+            <div className={cn(
+              "w-20 h-20 mx-auto mb-6 rounded-full",
+              "bg-gradient-to-br from-purple-100 to-pink-100",
+              "dark:from-purple-900/30 dark:to-pink-900/30",
+              "flex items-center justify-center"
+            )}>
+              <FolderIcon className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+            </div>
+            <h2 className="text-2xl font-bold gradient-text mb-2">
               No Collections Yet
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
@@ -287,7 +347,12 @@ export default function Collections() {
             </p>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+              className={cn(
+                "px-6 py-3 rounded-xl font-medium",
+                "bg-gradient-to-r from-purple-600 to-pink-600",
+                "hover:from-purple-700 hover:to-pink-700",
+                "text-white transition-all shadow-lg"
+              )}
             >
               Create Collection
             </button>
@@ -389,22 +454,26 @@ export default function Collections() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Choose an Icon
                   </label>
-                  <div className="grid grid-cols-8 gap-2">
-                    {ICON_OPTIONS.map((icon) => (
-                      <motion.button
-                        key={icon}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setSelectedIcon(icon)}
-                        className={`text-3xl p-3 rounded-lg transition-all ${
-                          selectedIcon === icon
-                            ? 'bg-purple-100 dark:bg-purple-900 ring-2 ring-purple-500'
-                            : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-                        }`}
-                      >
-                        {icon}
-                      </motion.button>
-                    ))}
+                  <div className="grid grid-cols-5 gap-2">
+                    {ICON_OPTIONS.map((iconOption) => {
+                      const IconComponent = iconOption.component;
+                      return (
+                        <motion.button
+                          key={iconOption.name}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => setSelectedIcon(iconOption.name)}
+                          className={cn(
+                            "p-3 rounded-lg transition-all",
+                            selectedIcon === iconOption.name
+                              ? 'bg-purple-100 dark:bg-purple-900 ring-2 ring-purple-500'
+                              : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          )}
+                        >
+                          <IconComponent className="w-6 h-6 mx-auto text-gray-700 dark:text-gray-300" />
+                        </motion.button>
+                      );
+                    })}
                   </div>
                 </div>
 

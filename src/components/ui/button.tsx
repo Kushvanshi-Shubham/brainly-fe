@@ -4,23 +4,44 @@ import { Spinner } from "./Spinner";
 
 const baseStyle = cn(
   "inline-flex items-center justify-center font-semibold",
-  "transition-all duration-200 ease-in-out",
+  "transition-all duration-200 ease-out",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
   "focus-visible:ring-purple-500 dark:focus-visible:ring-purple-400",
-  "dark:focus-visible:ring-offset-gray-900"
+  "dark:focus-visible:ring-offset-gray-900",
+  "active:scale-[0.98]"
 );
 
 const variantStyles = {
-  primary: "bg-purple-600 hover:bg-purple-700 text-white shadow-md",
-  secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600",
-  ghost: "bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300",
-  danger: "bg-red-500 hover:bg-red-600 text-white shadow-md",
+  primary: cn(
+    "bg-gradient-to-r from-purple-600 to-pink-600",
+    "hover:from-purple-700 hover:to-pink-700",
+    "text-white shadow-lg shadow-purple-500/25",
+    "hover:shadow-xl hover:shadow-purple-500/30"
+  ),
+  secondary: cn(
+    "bg-white dark:bg-gray-800",
+    "hover:bg-gray-50 dark:hover:bg-gray-700",
+    "text-gray-800 dark:text-gray-200",
+    "border border-gray-200 dark:border-gray-600",
+    "shadow-sm hover:shadow-md"
+  ),
+  ghost: cn(
+    "bg-transparent",
+    "hover:bg-gray-100 dark:hover:bg-gray-700/50",
+    "text-gray-700 dark:text-gray-300"
+  ),
+  danger: cn(
+    "bg-gradient-to-r from-red-500 to-rose-600",
+    "hover:from-red-600 hover:to-rose-700",
+    "text-white shadow-lg shadow-red-500/25",
+    "hover:shadow-xl hover:shadow-red-500/30"
+  ),
 };
 
 const sizeStyles = {
-  sm: "py-1.5 px-3 text-sm rounded-md",
-  md: "py-2.5 px-5 text-base rounded-md",
-  lg: "py-3.5 px-7 text-lg rounded-lg",
+  sm: "py-2 px-4 text-sm rounded-xl gap-1.5",
+  md: "py-2.5 px-5 text-base rounded-xl gap-2",
+  lg: "py-3.5 px-7 text-lg rounded-2xl gap-2.5",
 };
 
 
@@ -63,7 +84,7 @@ export const Button = ({
         variantStyles[variant],
         sizeStyles[size],
         fullWidth && "w-full",
-        isDisabled && "opacity-60 cursor-not-allowed",
+        isDisabled && "opacity-60 cursor-not-allowed pointer-events-none",
         className
       )}
       disabled={isDisabled}
@@ -71,15 +92,15 @@ export const Button = ({
       {...props}
     >
       {loading ? (
-        <span className="flex items-center justify-center" aria-live="polite">
+        <span className="flex items-center justify-center gap-2" aria-live="polite">
           <Spinner />
-          {content && <span className="ml-2">{loadingText}</span>}
+          {content && <span>{loadingText}</span>}
         </span>
       ) : (
         <>
-          {startIcon && <span className="mr-2 flex items-center">{startIcon}</span>}
+          {startIcon && <span className="flex items-center">{startIcon}</span>}
           {content}
-          {endIcon && <span className="ml-2 flex items-center">{endIcon}</span>}
+          {endIcon && <span className="flex items-center">{endIcon}</span>}
         </>
       )}
     </button>

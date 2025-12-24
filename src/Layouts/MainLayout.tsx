@@ -4,6 +4,7 @@ import { useContent } from '../hooks/useContent';
 import { Navbar } from '../components/NavBar';
 import { Sidebar } from '../components/ui/Sidebar';
 import { Spinner } from '../components/ui/Spinner';
+import { cn } from '../utlis/cn';
 
 // Lazy load heavy modal components for better initial load
 const CreateContentModal = lazy(() => 
@@ -29,18 +30,35 @@ export const MainLayout = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className={cn(
+      "flex min-h-screen",
+      "bg-gradient-to-br from-gray-50 via-gray-50 to-purple-50/30",
+      "dark:from-gray-900 dark:via-gray-900 dark:to-purple-950/20"
+    )}>
       {showSidebar && <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />}
       
-      <div className={`flex flex-1 flex-col transition-all duration-300 ${marginLeft}`}>
+      <div className={cn(
+        "flex flex-1 flex-col transition-all duration-300 ease-out",
+        marginLeft
+      )}>
         <Navbar onAddContent={() => setModalOpen(true)} />
-        <main className="flex-1">
-          <Outlet />
+        <main className="flex-1 relative">
+          {/* Subtle gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-purple-500/5 pointer-events-none" />
+          <div className="relative">
+            <Outlet />
+          </div>
         </main>
       </div>
       
       {modalOpen && (
-        <Suspense fallback={<div className="fixed inset-0 bg-black/20 dark:bg-black/40 flex items-center justify-center z-50"><Spinner /></div>}>
+        <Suspense fallback={
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl">
+              <Spinner size="lg" className="text-purple-600" />
+            </div>
+          </div>
+        }>
           <CreateContentModal
             open={modalOpen}
             onClose={() => setModalOpen(false)}

@@ -11,17 +11,26 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "py-2.5 px-4", 
-          "border border-gray-300 dark:border-gray-600",
-          "rounded-lg", 
+          "py-3 px-4", 
+          "border border-gray-200 dark:border-gray-600",
+          "rounded-xl", 
           "w-full",
-          "bg-white dark:bg-gray-700",
+          "bg-white/80 dark:bg-gray-800/80",
+          "backdrop-blur-sm",
           "text-gray-900 dark:text-white",
           "placeholder-gray-400 dark:placeholder-gray-500",
           
-          "focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent",
-          "hover:border-purple-400 dark:hover:border-purple-500",
-          "transition-all duration-200",
+          // Focus states
+          "focus:outline-none",
+          "focus:ring-2 focus:ring-purple-500/50",
+          "focus:border-purple-500",
+          "focus:bg-white dark:focus:bg-gray-800",
+          
+          // Hover states
+          "hover:border-purple-300 dark:hover:border-purple-600",
+          "hover:shadow-sm",
+          
+          "transition-all duration-200 ease-out",
           
           "disabled:opacity-50 disabled:cursor-not-allowed",
           className
