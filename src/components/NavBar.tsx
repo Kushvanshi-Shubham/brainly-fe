@@ -31,12 +31,10 @@ const NavbarComponent: React.FC<NavbarProps> = ({ onAddContent }) => {
       "relative text-sm font-medium transition-all duration-200",
       "text-gray-600 dark:text-gray-400",
       "hover:text-purple-600 dark:hover:text-purple-400",
-      isActive && [
-        "text-purple-600 dark:text-purple-400",
-        "after:absolute after:bottom-[-8px] after:left-0 after:right-0",
-        "after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:to-pink-500",
-        "after:rounded-full"
-      ]
+      isActive && "text-purple-600 dark:text-purple-400",
+      isActive && "after:absolute after:bottom-[-8px] after:left-0 after:right-0",
+      isActive && "after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:to-pink-500",
+      isActive && "after:rounded-full"
     );
 
   return (

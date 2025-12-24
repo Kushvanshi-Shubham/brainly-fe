@@ -25,13 +25,11 @@ function SidebarItemComponent({ text, icon, to, collapsed }: SidebarItemProps) {
           "hover:text-purple-600 dark:hover:text-purple-400",
           
           // Active states with gradient background
-          isActive && [
-            "bg-gradient-to-r from-purple-100 to-pink-100",
-            "dark:from-purple-900/40 dark:to-pink-900/40",
-            "text-purple-700 dark:text-purple-300",
-            "font-semibold",
-            "shadow-sm shadow-purple-200/50 dark:shadow-purple-900/30"
-          ],
+          isActive && "bg-gradient-to-r from-purple-100 to-pink-100",
+          isActive && "dark:from-purple-900/40 dark:to-pink-900/40",
+          isActive && "text-purple-700 dark:text-purple-300",
+          isActive && "font-semibold",
+          isActive && "shadow-sm shadow-purple-200/50 dark:shadow-purple-900/30",
           
           collapsed ? "justify-center" : "gap-3"
         )
