@@ -7,16 +7,13 @@ import {
   Squares2X2Icon,
   MagnifyingGlassIcon,
   BellIcon,
-  UserIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
   Squares2X2Icon as Squares2X2IconSolid,
   MagnifyingGlassIcon as MagnifyingGlassIconSolid,
-  FolderIcon as FolderIconSolid,
   BellIcon as BellIconSolid,
-  UserIcon as UserIconSolid,
 } from "@heroicons/react/24/solid";
 
 interface MobileNavigationProps {
