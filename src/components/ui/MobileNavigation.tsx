@@ -6,7 +6,6 @@ import {
   HomeIcon,
   Squares2X2Icon,
   MagnifyingGlassIcon,
-  FolderIcon,
   BellIcon,
   UserIcon,
   PlusIcon,
