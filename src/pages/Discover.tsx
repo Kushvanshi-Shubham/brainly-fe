@@ -85,19 +85,19 @@ export default function Discover() {
   }
 
   return (
-    <div className="px-4 py-8">
+    <div className="px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mb-8"
+          className="mb-4 sm:mb-6 md:mb-8"
         >
-          <h1 className="text-4xl font-bold gradient-text mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">
             Discover People
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Find interesting people to follow and see what they're saving
           </p>
         </motion.div>
@@ -108,16 +108,16 @@ export default function Discover() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           onSubmit={handleSearch}
-          className="mb-8"
+          className="mb-4 sm:mb-6 md:mb-8"
         >
           <div className="relative">
-            <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <SearchIcon className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
             <Input
               type="text"
               value={searchQuery}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-              placeholder="Search users by username or email..."
-              className="pl-12 pr-4 py-3 w-full text-lg"
+              placeholder="Search users..."
+              className="pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 w-full text-sm sm:text-base md:text-lg"
             />
           </div>
         </motion.form>
@@ -128,25 +128,25 @@ export default function Discover() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="text-center py-16 glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl"
+            className="text-center py-12 sm:py-16 glass border border-purple-200/50 dark:border-purple-800/30 rounded-xl sm:rounded-2xl"
           >
             <div className={cn(
-              "w-20 h-20 mx-auto mb-6 rounded-full",
+              "w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full",
               "bg-gradient-to-br from-purple-100 to-pink-100",
               "dark:from-purple-900/30 dark:to-pink-900/30",
               "flex items-center justify-center"
             )}>
-              <UserGroupIcon className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+              <UserGroupIcon className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600 dark:text-purple-400" />
             </div>
-            <h3 className="text-2xl font-bold gradient-text mb-3">
+            <h3 className="text-xl sm:text-2xl font-bold gradient-text mb-2 sm:mb-3">
               No users found
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-400">
               {searchQuery ? "Try a different search query" : "No suggested users at the moment"}
             </p>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {users.map((user, index) => (
               <motion.div
                 key={user._id}
@@ -156,61 +156,57 @@ export default function Discover() {
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 className={cn(
                   "group relative glass border border-purple-200/50 dark:border-purple-800/30",
-                  "rounded-2xl shadow-lg hover:shadow-xl transition-all p-6",
+                  "rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all p-4 sm:p-6",
                   "hover:border-purple-400 dark:hover:border-purple-500"
                 )}
               >
                 {/* User Avatar and Info */}
-                <div className="flex flex-col items-center text-center mb-4">
+                <div className="flex flex-col items-center text-center mb-3 sm:mb-4">
                   <button
                     onClick={() => navigate(`/user/${user._id}`)}
-                    className="mb-4 hover:scale-105 transition-transform duration-200"
+                    className="mb-3 sm:mb-4 hover:scale-105 transition-transform duration-200"
                   >
                     <Avatar
                       profilePic={user.profilePic}
                       username={user.username}
-                      size="xl"
+                      size="lg"
                       showOnlineIndicator={false}
                     />
                   </button>
 
                   <button
                     onClick={() => navigate(`/user/${user._id}`)}
-                    className="text-xl font-bold gradient-text hover:opacity-80 transition-opacity mb-1"
+                    className="text-base sm:text-lg md:text-xl font-bold gradient-text hover:opacity-80 transition-opacity mb-1"
                   >
                     {user.username}
                   </button>
 
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                    {user.email}
-                  </p>
-
                   {user.bio && (
-                    <p className="text-sm text-gray-600 dark:text-gray-300 italic line-clamp-2 mb-4 px-2">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 italic line-clamp-2 mb-3 sm:mb-4 px-2">
                       "{user.bio}"
                     </p>
                   )}
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-4 mb-5 py-4 border-y border-gray-200/50 dark:border-gray-700/50 rounded-lg">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-5 py-3 sm:py-4 border-y border-gray-200/50 dark:border-gray-700/50 rounded-lg">
                   <div className="text-center">
-                    <p className="text-2xl font-bold gradient-text">
+                    <p className="text-lg sm:text-xl md:text-2xl font-bold gradient-text">
                       {user.contentCount}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Saves</p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">Saves</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold gradient-text">
+                    <p className="text-lg sm:text-xl md:text-2xl font-bold gradient-text">
                       {user.followersCount}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Followers</p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">Followers</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold gradient-text">
+                    <p className="text-lg sm:text-xl md:text-2xl font-bold gradient-text">
                       {user.followingCount}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Following</p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">Following</p>
                   </div>
                 </div>
 

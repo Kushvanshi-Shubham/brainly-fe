@@ -95,11 +95,11 @@ function SortableCollectionCard({ collection, onClick }: Readonly<SortableCollec
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
       <motion.div
-        whileHover={{ y: -8, scale: 1.02 }}
+        whileHover={{ y: -4, scale: 1.01 }}
         className="cursor-pointer group relative"
       >
         <div
-          className="rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden"
+          className="rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden"
           style={{
             background: `linear-gradient(135deg, ${collection.color}15, ${collection.color}05)`,
             borderLeft: `4px solid ${collection.color}`,
@@ -118,23 +118,23 @@ function SortableCollectionCard({ collection, onClick }: Readonly<SortableCollec
 
           {/* Content */}
           <div className="relative">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="flex items-center gap-2 sm:gap-3">
                 {/* Drag Handle */}
                 <button
                   {...listeners}
-                  className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                  className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors hidden sm:block"
                   title="Drag to reorder"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                   </svg>
                 </button>
                 <div 
                   onClick={onClick}
                   className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center",
+                    "w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center",
                     "bg-gradient-to-br from-purple-100 to-pink-100",
                     "dark:from-purple-900/30 dark:to-pink-900/30"
                   )}
@@ -143,41 +143,41 @@ function SortableCollectionCard({ collection, onClick }: Readonly<SortableCollec
                   {(() => {
                     const IconOption = ICON_OPTIONS.find(opt => opt.name === collection.icon);
                     const IconComponent = IconOption?.component || FolderIcon;
-                    return <IconComponent className="w-6 h-6" />;
+                    return <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />;
                   })()}
                 </div>
               </div>
               {collection.isPrivate && (
-                <div className="bg-gray-800 dark:bg-gray-700 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <div className="bg-gray-800 dark:bg-gray-700 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex items-center gap-0.5 sm:gap-1">
+                  <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  Private
+                  <span className="hidden sm:inline">Private</span>
                 </div>
               )}
             </div>
 
             <div onClick={onClick}>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-1">
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-1.5 sm:mb-2 line-clamp-1">
                 {collection.name}
               </h3>
 
               {collection.description && (
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4 line-clamp-2">
                   {collection.description}
                 </p>
               )}
 
               <div className="flex items-center justify-between">
                 <div
-                  className="flex items-center gap-2 text-sm font-medium"
+                  className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium"
                   style={{ color: collection.color }}
                 >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                   </svg>
                   {collection.contentCount} {collection.contentCount === 1 ? "item" : "items"}
@@ -295,15 +295,15 @@ export default function Collections() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 md:mb-8">
           <div>
-            <h1 className="text-4xl font-bold gradient-text">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">
               My Collections
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
               Organize your saved content into custom collections
             </p>
           </div>
@@ -312,14 +312,15 @@ export default function Collections() {
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowCreateModal(true)}
             className={cn(
-              "px-6 py-3 rounded-xl font-medium shadow-lg",
+              "px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-medium shadow-lg text-sm sm:text-base",
               "bg-gradient-to-r from-purple-600 to-pink-600",
               "hover:from-purple-700 hover:to-pink-700",
-              "text-white transition-all flex items-center gap-2"
+              "text-white transition-all flex items-center gap-1.5 sm:gap-2"
             )}
           >
-            <PlusIcon className="w-5 h-5" />
-            New Collection
+            <PlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">New Collection</span>
+            <span className="sm:hidden">New</span>
           </motion.button>
         </div>
 
@@ -329,26 +330,26 @@ export default function Collections() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="text-center py-20"
+            className="text-center py-12 sm:py-16 md:py-20"
           >
             <div className={cn(
-              "w-20 h-20 mx-auto mb-6 rounded-full",
+              "w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full",
               "bg-gradient-to-br from-purple-100 to-pink-100",
               "dark:from-purple-900/30 dark:to-pink-900/30",
               "flex items-center justify-center"
             )}>
-              <FolderIcon className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+              <FolderIcon className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600 dark:text-purple-400" />
             </div>
-            <h2 className="text-2xl font-bold gradient-text mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold gradient-text mb-2">
               No Collections Yet
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
+            <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-4 sm:mb-6">
               Create your first collection to organize your content
             </p>
             <button
               onClick={() => setShowCreateModal(true)}
               className={cn(
-                "px-6 py-3 rounded-xl font-medium",
+                "px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-medium text-sm sm:text-base",
                 "bg-gradient-to-r from-purple-600 to-pink-600",
                 "hover:from-purple-700 hover:to-pink-700",
                 "text-white transition-all shadow-lg"
@@ -364,7 +365,7 @@ export default function Collections() {
             onDragEnd={handleDragEnd}
           >
             <SortableContext items={collections.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {collections.map((collection) => (
                   <SortableCollectionCard
                     key={collection.id}
@@ -385,7 +386,7 @@ export default function Collections() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-3 sm:px-4"
             onClick={() => !creating && setShowCreateModal(false)}
           >
             <motion.div
@@ -393,11 +394,11 @@ export default function Collections() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
-              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-t-xl sm:rounded-t-2xl">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                   Create New Collection
                 </h2>
                 <button

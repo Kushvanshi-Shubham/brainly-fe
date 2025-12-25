@@ -14,7 +14,7 @@ interface FilterSortProps {
 }
 
 const selectClasses = cn(
-  "w-full px-4 py-2.5 rounded-xl text-sm",
+  "w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm",
   "bg-white/80 dark:bg-gray-800/80",
   "backdrop-blur-sm",
   "border border-gray-200 dark:border-gray-700",
@@ -40,18 +40,18 @@ const FilterSort = memo(({
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "rounded-2xl p-5 mb-6",
+        "rounded-xl sm:rounded-2xl p-3 sm:p-5 mb-4 sm:mb-6",
         "bg-white/70 dark:bg-gray-800/70",
         "backdrop-blur-xl",
         "border border-gray-200/50 dark:border-gray-700/50",
         "shadow-sm shadow-gray-200/20 dark:shadow-black/10"
       )}
     >
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         {/* Type Filter */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Filter by Type
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
+            Type
           </label>
           <select
             value={typeFilter}
@@ -93,43 +93,43 @@ const FilterSort = memo(({
 
         {/* Sort By */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Sort By
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
+            Sort
           </label>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             className={selectClasses}
           >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="title">Title A-Z</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="title">A-Z</option>
           </select>
         </div>
 
         {/* Quick Filters */}
-        <div className="md:col-span-2 flex items-end gap-3">
+        <div className="col-span-2 flex items-end gap-2 sm:gap-3">
           <button
             onClick={() => setShowFavorites(!showFavorites)}
             className={cn(
-              "flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200",
+              "flex-1 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-[10px] sm:text-sm transition-all duration-200",
               showFavorites
                 ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-white shadow-lg shadow-amber-500/25 hover:shadow-xl"
                 : "bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600/50 border border-gray-200/50 dark:border-gray-600/50"
             )}
           >
-            ⭐ {showFavorites ? 'Showing' : 'Show'} Favorites
+            <span className="hidden sm:inline">⭐ </span>Favorites
           </button>
           <button
             onClick={() => setShowArchived(!showArchived)}
             className={cn(
-              "flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200",
+              "flex-1 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-[10px] sm:text-sm transition-all duration-200",
               showArchived
                 ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl"
                 : "bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600/50 border border-gray-200/50 dark:border-gray-600/50"
             )}
           >
-            📦 {showArchived ? 'Showing' : 'Show'} Archived
+            <span className="hidden sm:inline">📦 </span>Archived
           </button>
         </div>
       </div>

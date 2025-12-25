@@ -197,55 +197,56 @@ export default function Profile() {
   }
 
   return (
-    <div className="px-4 py-8">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="px-3 sm:px-4 py-4 sm:py-8">
+      <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-4 sm:p-8 mb-4 sm:mb-6"
         >
-          <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6">
             {/* Profile Picture */}
             <Avatar
               profilePic={profile?.profilePic}
               username={profile?.username || 'User'}
-              size="2xl"
+              size="xl"
               showOnlineIndicator={true}
             />
 
             {/* User Info */}
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2 justify-center md:justify-start">
-                <UserIcon className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2 justify-center md:justify-start">
+                <UserIcon className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 dark:text-purple-400" />
                 {profile?.username}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mb-2">{profile?.email}</p>
-              <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2 justify-center md:justify-start">
-                <CalendarIcon className="w-5 h-5" />
-                Member since {profile?.joinedAt ? new Date(profile.joinedAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long' }) : 'N/A'}
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-2">{profile?.email}</p>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 flex items-center gap-2 justify-center md:justify-start">
+                <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Member since </span>
+                {profile?.joinedAt ? new Date(profile.joinedAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long' }) : 'N/A'}
               </p>
               {!editMode && profile?.bio && (
-                <p className="text-gray-700 dark:text-gray-300 mt-3 italic">"{profile.bio}"</p>
+                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mt-3 italic line-clamp-2 sm:line-clamp-none">"{profile.bio}"</p>
               )}
             </div>
 
             {/* Edit/Logout Buttons */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto">
               {!editMode ? (
                 <>
                   <Button
                     onClick={() => setEditMode(true)}
                     variant="primary"
-                    text="Edit Profile"
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                    text="Edit"
+                    className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 text-white text-sm sm:text-base"
                   />
                   <Button
                     onClick={logout}
                     variant="ghost"
-                    text="Logout"
-                    startIcon={<LogOutIcon />}
-                    className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 border border-red-300 dark:border-red-700"
+                    text=""
+                    startIcon={<LogOutIcon className="w-4 h-4" />}
+                    className="flex-1 sm:flex-none text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 border border-red-300 dark:border-red-700"
                   />
                 </>
               ) : (
@@ -420,21 +421,21 @@ export default function Profile() {
         </motion.div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Saves</p>
-                <p className="text-4xl font-bold text-purple-600 dark:text-purple-400 mt-2">
+                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Total Saves</p>
+                <p className="text-2xl sm:text-4xl font-bold text-purple-600 dark:text-purple-400 mt-1 sm:mt-2">
                   {profile?.contentCount || 0}
                 </p>
               </div>
-              <ArchiveIcon className="w-12 h-12 text-purple-600 dark:text-purple-400 opacity-20" />
+              <ArchiveIcon className="w-8 h-8 sm:w-12 sm:h-12 text-purple-600 dark:text-purple-400 opacity-20" />
             </div>
           </motion.div>
 
@@ -442,16 +443,16 @@ export default function Profile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6 cursor-pointer hover:shadow-xl transition-shadow"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Followers</p>
-                <p className="text-4xl font-bold text-green-600 dark:text-green-400 mt-2">
+                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Followers</p>
+                <p className="text-2xl sm:text-4xl font-bold text-green-600 dark:text-green-400 mt-1 sm:mt-2">
                   {followersCount}
                 </p>
               </div>
-              <UserIcon className="w-12 h-12 text-green-600 dark:text-green-400 opacity-20" />
+              <UserIcon className="w-8 h-8 sm:w-12 sm:h-12 text-green-600 dark:text-green-400 opacity-20" />
             </div>
           </motion.div>
 
@@ -459,16 +460,16 @@ export default function Profile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6 cursor-pointer hover:shadow-xl transition-shadow"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Following</p>
-                <p className="text-4xl font-bold text-orange-600 dark:text-orange-400 mt-2">
+                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Following</p>
+                <p className="text-2xl sm:text-4xl font-bold text-orange-600 dark:text-orange-400 mt-1 sm:mt-2">
                   {followingCount}
                 </p>
               </div>
-              <UserIcon className="w-12 h-12 text-orange-600 dark:text-orange-400 opacity-20" />
+              <UserIcon className="w-8 h-8 sm:w-12 sm:h-12 text-orange-600 dark:text-orange-400 opacity-20" />
             </div>
           </motion.div>
 
@@ -476,16 +477,16 @@ export default function Profile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Unique Tags</p>
-                <p className="text-4xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Unique Tags</p>
+                <p className="text-2xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400 mt-1 sm:mt-2">
                   {profile?.totalTags || 0}
                 </p>
               </div>
-              <span className="text-5xl opacity-20">🏷️</span>
+              <span className="text-3xl sm:text-5xl opacity-20">🏷️</span>
             </div>
           </motion.div>
 
@@ -493,65 +494,65 @@ export default function Profile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Content Types</p>
-                <p className="text-4xl font-bold text-green-600 dark:text-green-400 mt-2">
+                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Content Types</p>
+                <p className="text-2xl sm:text-4xl font-bold text-green-600 dark:text-green-400 mt-1 sm:mt-2">
                   {profile?.typeBreakdown?.length || 0}
                 </p>
               </div>
-              <span className="text-5xl opacity-20">📊</span>
+              <span className="text-3xl sm:text-5xl opacity-20">📊</span>
             </div>
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Type Breakdown */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-4 sm:p-6"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                📊 Content by Type
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h2 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">
+                📊 <span className="hidden sm:inline">Content by Type</span><span className="sm:hidden">By Type</span>
               </h2>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 {profile?.contentCount || 0} total
               </span>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {profile?.typeBreakdown && profile.typeBreakdown.length > 0 ? (
                 profile.typeBreakdown.map((item, index) => {
                   const platformMeta = getPlatformMeta(item._id as ContentType);
                   const percentage = Math.round((item.count / (profile?.contentCount || 1)) * 100);
                   return (
-                  <div key={item._id || index} className="group hover:bg-gray-50 dark:hover:bg-gray-700/50 p-3 rounded-lg transition-colors">
+                  <div key={item._id || index} className="group hover:bg-gray-50 dark:hover:bg-gray-700/50 p-2 sm:p-3 rounded-lg transition-colors">
                     <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{platformMeta.icon}</span>
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <span className="text-lg sm:text-2xl">{platformMeta.icon}</span>
                         <div>
-                          <span className="font-semibold text-gray-800 dark:text-gray-200 capitalize block">
+                          <span className="font-semibold text-gray-800 dark:text-gray-200 capitalize block text-sm sm:text-base">
                             {item._id}
                           </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {percentage}% of content
+                          <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                            {percentage}%
                           </span>
                         </div>
                       </div>
-                      <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      <span className="text-lg sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
                         {item.count}
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 sm:h-2.5 overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
                         transition={{ duration: 0.8, delay: index * 0.1 }}
-                        className="h-2.5 rounded-full"
+                        className="h-2 sm:h-2.5 rounded-full"
                         style={{ backgroundColor: platformMeta.color }}
                       ></motion.div>
                     </div>
@@ -559,9 +560,9 @@ export default function Profile() {
                   );
                 })
               ) : (
-                <div className="text-center py-12">
-                  <span className="text-6xl opacity-20 block mb-4">📊</span>
-                  <p className="text-gray-500 dark:text-gray-400">
+                <div className="text-center py-8 sm:py-12">
+                  <span className="text-4xl sm:text-6xl opacity-20 block mb-3 sm:mb-4">📊</span>
+                  <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
                     No content types yet. Start saving content!
                   </p>
                 </div>
@@ -574,17 +575,17 @@ export default function Profile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-4 sm:p-6"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                🏷️ Most Used Tags
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h2 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">
+                🏷️ <span className="hidden sm:inline">Most Used Tags</span><span className="sm:hidden">Top Tags</span>
               </h2>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 {profile?.totalTags || 0} unique
               </span>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {profile?.topTags && profile.topTags.length > 0 ? (
                 profile.topTags.map((tag) => {
                   const percentage = profile.contentCount > 0 
@@ -594,7 +595,7 @@ export default function Profile() {
                     <button
                       key={tag._id}
                       onClick={() => navigate(`/explore?tag=${encodeURIComponent(tag.name)}`)}
-                      className="group relative px-4 py-2.5 bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/40 dark:to-blue-900/40 hover:from-purple-200 hover:to-blue-200 dark:hover:from-purple-800/60 dark:hover:to-blue-800/60 rounded-full transition-all cursor-pointer shadow-sm hover:shadow-md"
+                      className="group relative px-3 sm:px-4 py-1.5 sm:py-2.5 bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/40 dark:to-blue-900/40 hover:from-purple-200 hover:to-blue-200 dark:hover:from-purple-800/60 dark:hover:to-blue-800/60 rounded-full transition-all cursor-pointer shadow-sm hover:shadow-md text-sm sm:text-base"
                       title={`Explore content tagged with ${tag.name}`}
                     >
                       <div className="flex items-center gap-2">

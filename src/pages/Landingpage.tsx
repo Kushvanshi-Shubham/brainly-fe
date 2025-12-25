@@ -73,7 +73,7 @@ export function LandingPage() {
               </div>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              Welcome to <span className="gradient-text">Brainly</span>
+              Welcome to <span className="gradient-text">Braintox</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-4 max-w-3xl mx-auto">
               Organize your links, share ideas, and build your digital brain.
@@ -346,14 +346,14 @@ export function LandingPage() {
               {
                 name: "Sarah Chen",
                 role: "Product Designer",
-                content: "Brainly has completely changed how I organize my design inspiration. I can finally find that perfect reference when I need it!",
+                content: "Braintox has completely changed how I organize my design inspiration. I can finally find that perfect reference when I need it!",
                 avatar: PaintBrushIcon,
                 rating: 5
               },
               {
                 name: "Marcus Rodriguez",
                 role: "Software Engineer",
-                content: "As a developer, I save tons of code snippets and documentation. Brainly makes it so easy to categorize and retrieve everything.",
+                content: "As a developer, I save tons of code snippets and documentation. Braintox makes it so easy to categorize and retrieve everything.",
                 avatar: CodeBracketIcon,
                 rating: 5
               },

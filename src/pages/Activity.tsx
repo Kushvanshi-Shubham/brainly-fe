@@ -215,19 +215,19 @@ export const ActivityFeed = () => {
   }
 
   return (
-    <div className="min-h-screen px-4 py-8">
+    <div className="min-h-screen px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mb-8"
+          className="mb-4 sm:mb-6 md:mb-8"
         >
-          <h1 className="text-4xl font-bold gradient-text mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">
             Activity Feed
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Stay updated with your notifications and interactions
           </p>
         </motion.div>
@@ -239,21 +239,21 @@ export const ActivityFeed = () => {
           transition={{ delay: 0.1, duration: 0.4 }}
           className={cn(
             "glass border border-purple-200/50 dark:border-purple-800/30",
-            "rounded-2xl p-6 shadow-xl mb-8"
+            "rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl mb-4 sm:mb-6 md:mb-8"
           )}
         >
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold gradient-text">{stats.total}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total</div>
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold gradient-text">{stats.total}</div>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">Total</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold gradient-text">{stats.follows}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Follows</div>
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold gradient-text">{stats.follows}</div>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">Follows</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold gradient-text">{stats.unread}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Unread</div>
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold gradient-text">{stats.unread}</div>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">Unread</div>
             </div>
           </div>
         </motion.div>
@@ -263,9 +263,9 @@ export const ActivityFeed = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
-          className="mb-6"
+          className="mb-4 sm:mb-6"
         >
-          <div className="flex gap-2 flex-wrap glass border border-purple-200/50 dark:border-purple-800/30 p-2 rounded-xl shadow-lg">
+          <div className="flex gap-1.5 sm:gap-2 flex-wrap glass border border-purple-200/50 dark:border-purple-800/30 p-1.5 sm:p-2 rounded-lg sm:rounded-xl shadow-lg">
             {FILTER_TABS.map((tab) => {
               const TabIcon = tab.IconComponent;
               return (
@@ -273,14 +273,14 @@ export const ActivityFeed = () => {
                   key={tab.value}
                   onClick={() => setFilter(tab.value)}
                   className={cn(
-                    "flex-1 px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2",
+                    "flex-1 px-2 sm:px-4 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-medium text-xs sm:text-sm transition-all flex items-center justify-center gap-1 sm:gap-2",
                     filter === tab.value
                       ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md"
                       : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                   )}
                 >
-                  <TabIcon className="w-5 h-5" />
-                  {tab.label}
+                  <TabIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               );
             })}
@@ -294,22 +294,22 @@ export const ActivityFeed = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="mb-6"
+              className="mb-4 sm:mb-6"
             >
               <div className={cn(
-                "flex items-center justify-between",
+                "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3",
                 "glass border border-purple-300/50 dark:border-purple-700/50",
-                "rounded-2xl p-5 shadow-lg"
+                "rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-lg"
               )}>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-600">
-                    <span className="text-white font-bold">{unreadCount}</span>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-600">
+                    <span className="text-white font-bold text-sm sm:text-base">{unreadCount}</span>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">
+                    <p className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white">
                       {unreadCount} unread notification{unreadCount === 1 ? "" : "s"}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       Click to view or mark all as read
                     </p>
                   </div>

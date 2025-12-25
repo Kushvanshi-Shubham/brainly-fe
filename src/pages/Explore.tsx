@@ -131,30 +131,30 @@ const Explore = () => {
   };
 
   return (
-    <div className="px-4 py-8">
+    <div className="px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto">{" "}
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="mb-4 sm:mb-6 md:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">
             Explore
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Discover insights and search your content
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200/50 dark:border-gray-700/50">
+        <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 border-b border-gray-200/50 dark:border-gray-700/50 overflow-x-auto">
           <button
             onClick={() => setActiveTab("discover")}
             className={cn(
-              "px-6 py-3 font-semibold transition-all relative flex items-center gap-2",
+              "px-4 sm:px-6 py-2.5 sm:py-3 font-semibold transition-all relative flex items-center gap-1.5 sm:gap-2 whitespace-nowrap text-sm sm:text-base",
               activeTab === "discover"
                 ? "text-purple-600 dark:text-purple-400"
                 : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
             )}
           >
-            <FireIcon className="w-5 h-5" />
+            <FireIcon className="w-4 h-4 sm:w-5 sm:h-5" />
             Discover
             {activeTab === "discover" && (
               <motion.div
@@ -166,13 +166,13 @@ const Explore = () => {
           <button
             onClick={() => setActiveTab("search")}
             className={cn(
-              "px-6 py-3 font-semibold transition-all relative flex items-center gap-2",
+              "px-4 sm:px-6 py-2.5 sm:py-3 font-semibold transition-all relative flex items-center gap-1.5 sm:gap-2 whitespace-nowrap text-sm sm:text-base",
               activeTab === "search"
                 ? "text-purple-600 dark:text-purple-400"
                 : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
             )}
           >
-            <MagnifyingGlassIcon className="w-5 h-5" />
+            <MagnifyingGlassIcon className="w-4 h-4 sm:w-5 sm:h-5" />
             Search
             {activeTab === "search" && (
               <motion.div
@@ -198,29 +198,29 @@ const Explore = () => {
                   <Spinner />
                 </div>
               ) : discoveryData ? (
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* Stats Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.3 }}
-                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
+                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <ChartBarIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                        <ChartBarIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
                         Activity Overview
                       </h3>
-                      <div className="space-y-3">
+                      <div className="space-y-2 sm:space-y-3">
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-600 dark:text-gray-400">This Week</span>
-                          <span className="text-2xl font-bold gradient-text">
+                          <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400">This Week</span>
+                          <span className="text-xl sm:text-2xl font-bold gradient-text">
                             {discoveryData.weeklyContent}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-600 dark:text-gray-400">This Month</span>
-                          <span className="text-2xl font-bold gradient-text">
+                          <span className="text-sm sm:text-base text-gray-600 dark:text-gray-400">This Month</span>
+                          <span className="text-xl sm:text-2xl font-bold gradient-text">
                             {discoveryData.monthlyContent}
                           </span>
                         </div>
@@ -231,10 +231,10 @@ const Explore = () => {
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.1, duration: 0.3 }}
-                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
+                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <CubeIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                        <CubeIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
                         Rediscover
                       </h3>
                       {discoveryData.randomItem ? (
@@ -265,22 +265,22 @@ const Explore = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.3 }}
-                    className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
+                    className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg"
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
                       Content by Type
                     </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                       {discoveryData.typeBreakdown.map((item) => (
                         <div
                           key={item._id}
-                          className="glass border border-gray-200/50 dark:border-gray-700/50 rounded-xl p-4 text-center"
+                          className="glass border border-gray-200/50 dark:border-gray-700/50 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center"
                         >
-                          <div className="text-3xl mb-2">{getPlatformMeta(item._id as ContentType).icon}</div>
-                          <div className="text-2xl font-bold gradient-text">
+                          <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{getPlatformMeta(item._id as ContentType).icon}</div>
+                          <div className="text-lg sm:text-2xl font-bold gradient-text">
                             {item.count}
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+                          <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 capitalize truncate">
                             {item._id}
                           </div>
                         </div>
@@ -293,14 +293,14 @@ const Explore = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.3 }}
-                    className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
+                    className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg"
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                      <HashtagIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                      <HashtagIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
                       Popular Tags
                     </h3>
                     {discoveryData.tagStats.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
                         {discoveryData.tagStats.map((tag) => (
                           <button
                             key={tag._id}
@@ -309,7 +309,7 @@ const Explore = () => {
                               setSelectedTags([tag.name]);
                               setSearchQuery("");
                             }}
-                            className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-full text-sm font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
                             title={`Filter by ${tag.name}`}
                           >
                             #{tag.name} ({tag.count})
@@ -317,7 +317,7 @@ const Explore = () => {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 dark:text-gray-400">No tags found. Start tagging your content!</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">No tags found. Start tagging your content!</p>
                     )}
                   </motion.div>
 
@@ -327,32 +327,32 @@ const Explore = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4, duration: 0.3 }}
-                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
+                      className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <ClockIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                        <ClockIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
                         On This Day
                       </h3>
-                      <div className="space-y-3">
+                      <div className="space-y-2 sm:space-y-3">
                         {discoveryData.onThisDay.map((item) => (
                           <div
                             key={item._id}
-                            className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                            className="flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                           >
-                            <div className="text-2xl">{getPlatformMeta(item.type as ContentType).icon}</div>
-                            <div className="flex-1">
-                              <h4 className="font-medium text-gray-900 dark:text-white line-clamp-1">
+                            <div className="text-xl sm:text-2xl">{getPlatformMeta(item.type as ContentType).icon}</div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-sm sm:text-base text-gray-900 dark:text-white line-clamp-1">
                                 {item.title}
                               </h4>
                               <a
                                 href={item.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm text-purple-600 dark:text-purple-400 hover:underline line-clamp-1"
+                                className="text-xs sm:text-sm text-purple-600 dark:text-purple-400 hover:underline line-clamp-1"
                               >
                                 {item.link}
                               </a>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1">
                                 {new Date(item.createdAt || Date.now()).getFullYear()}
                               </p>
                             </div>
@@ -373,21 +373,21 @@ const Explore = () => {
               transition={{ duration: 0.3 }}
             >
               {/* Search Bar */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg mb-6">
-                <div className="flex gap-3">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-lg mb-4 sm:mb-6">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <div className="flex-1 relative">
-                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="🔍 Advanced search with filters (type, tags, dates)..."
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      placeholder="Search with filters..."
+                      className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base"
                     />
                   </div>
                   <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                    className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base ${
                       showFilters
                         ? "bg-purple-600 text-white"
                         : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
@@ -396,7 +396,7 @@ const Explore = () => {
                     Filters {showFilters ? "▲" : "▼"}
                   </button>
                 </div>
-                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                   Search across all platform content with advanced filtering options
                 </p>
 

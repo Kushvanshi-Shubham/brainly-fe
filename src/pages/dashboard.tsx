@@ -65,7 +65,7 @@ function Dashboard() {
   }, [contents, debouncedSearch, typeFilter, selectedTag, sortBy, showFavorites, showArchived]);
 
   return (
-    <div className="px-6 py-8">
+    <div className="px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
       <motion.div
         className="max-w-7xl mx-auto"
         initial={{ opacity: 0 }}
@@ -73,35 +73,35 @@ function Dashboard() {
         transition={{ duration: 0.4 }}
       >
         {/* Search Bar */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <input
             type="text"
-            placeholder="📁 Search your saved content..."
+            placeholder="Search your saved content..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none text-sm sm:text-base"
           />
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
             Search through your personal saved content only
           </p>
         </div>
 
         {/* Tag Filter */}
         {availableTags.length > 0 && (
-          <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-              🏷️ Filter by Tag
+          <div className="mb-4 sm:mb-6 bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <h3 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+              Filter by Tag
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               <button
                 onClick={() => setSelectedTag("all")}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium transition-colors ${
                   selectedTag === "all"
                     ? "bg-purple-600 text-white"
                     : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                 }`}
               >
-                All Tags ({contents.length})
+                All ({contents.length})
               </button>
               {availableTags.map((tag) => {
                 const count = contents.filter(c => 
@@ -111,7 +111,7 @@ function Dashboard() {
                   <button
                     key={tag}
                     onClick={() => setSelectedTag(tag)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium transition-colors ${
                       selectedTag === tag
                         ? "bg-purple-600 text-white"
                         : "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/50"
@@ -164,7 +164,7 @@ function Dashboard() {
         {!loading && !error && filteredContents.length > 0 && (
           <motion.div
             layout
-            className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6"
           >
             {filteredContents.map((content) => (
               <Card

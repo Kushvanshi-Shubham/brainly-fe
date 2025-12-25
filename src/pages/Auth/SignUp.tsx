@@ -116,7 +116,7 @@ export function SignUp() {
               <span>Back to Home</span>
             </Link>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold gradient-text">Brainly</span>
+              <span className="text-2xl font-bold gradient-text">Braintox</span>
             </div>
           </div>
         </div>

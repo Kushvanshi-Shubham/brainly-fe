@@ -23,7 +23,7 @@ const features = [
 export const FeaturesSection = () => (
   <section className="w-full bg-gray-50 dark:bg-gray-900 py-20 px-4">
     <div className="max-w-5xl mx-auto text-center">
-      <h2 className="text-3xl font-bold mb-4">What can you do with Brainly?</h2>
+      <h2 className="text-3xl font-bold mb-4">What can you do with Braintox?</h2>
       <p className="text-lg text-gray-600 dark:text-gray-400 mb-12">A central hub for your digital life.</p>
       <div className="grid md:grid-cols-3 gap-8">
         {features.map((feature, index) => (

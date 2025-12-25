@@ -13,7 +13,7 @@ export const HeroSection = () => (
       transition={{ duration: 0.6, delay: 0.2 }}
       className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-800 dark:text-white leading-tight"
     >
-      Welcome to <span className="text-purple-600 dark:text-purple-400">Brainly</span>
+      Welcome to <span className="text-purple-600 dark:text-purple-400">Braintox</span>
     </motion.h1>
     <motion.p
       initial={{ opacity: 0, y: 20 }}

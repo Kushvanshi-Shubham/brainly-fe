@@ -1,7 +1,7 @@
 // Service Worker for offline capabilities and caching
-const CACHE_NAME = 'brainly-v1';
-const STATIC_CACHE = 'brainly-static-v1';
-const DYNAMIC_CACHE = 'brainly-dynamic-v1';
+const CACHE_NAME = 'braintox-v1';
+const STATIC_CACHE = 'braintox-static-v1';
+const DYNAMIC_CACHE = 'braintox-dynamic-v1';
 
 // Assets to cache immediately
 const STATIC_ASSETS = [
@@ -110,7 +110,7 @@ async function syncContent() {
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {};
   const options = {
-    body: data.body || 'New notification from Brainly',
+    body: data.body || 'New notification from Braintox',
     icon: '/icon-192.png',
     badge: '/badge-72.png',
     vibrate: [200, 100, 200],
@@ -120,7 +120,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Brainly', options)
+    self.registration.showNotification(data.title || 'Braintox', options)
   );
 });
 

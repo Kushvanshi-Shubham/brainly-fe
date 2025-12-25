@@ -161,18 +161,18 @@ const SocialFeed = () => {
   }
 
   return (
-    <div className="min-h-screen px-4 py-8">
-      <div className="max-w-5xl mx-auto space-y-8">
+    <div className="min-h-screen px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <h1 className="text-4xl font-bold gradient-text mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">
             Social Feed
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Content from {stats.followingCount} {stats.followingCount === 1 ? 'person' : 'people'} you follow
           </p>
         </motion.div>
@@ -184,21 +184,21 @@ const SocialFeed = () => {
           transition={{ delay: 0.1, duration: 0.4 }}
           className={cn(
             "glass border border-purple-200/50 dark:border-purple-800/30",
-            "rounded-2xl p-6 shadow-xl"
+            "rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl"
           )}
         >
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold gradient-text">{stats.totalItems}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Items</div>
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold gradient-text">{stats.totalItems}</div>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">Items</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold gradient-text">{stats.followingCount}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Following</div>
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold gradient-text">{stats.followingCount}</div>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">Following</div>
             </div>
-            <div className="text-center col-span-2 md:col-span-1">
-              <div className="text-3xl font-bold gradient-text">{trending.length}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Trending</div>
+            <div className="text-center">
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold gradient-text">{trending.length}</div>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">Trending</div>
             </div>
           </div>
         </motion.div>
@@ -210,14 +210,14 @@ const SocialFeed = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
-                <FireIcon className="w-6 h-6 text-orange-500" />
+            <div className="mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-1 sm:mb-2">
+                <FireIcon className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
                 Trending This Week
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">Recent saves from your network</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Recent saves from your network</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {trending.map((item, idx) => (
                 <SocialFeedCard key={item._id} item={item} index={idx} />
               ))}
@@ -231,19 +231,19 @@ const SocialFeed = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4 }}
-            className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 shadow-lg"
+            className="glass border border-purple-200/50 dark:border-purple-800/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg"
           >
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
-              <HashtagIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-3 sm:mb-4">
+              <HashtagIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
               Popular Tags
             </h2>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {popularTags.map((tag) => (
                 <button
                   key={tag._id}
                   onClick={() => navigate(`/explore?tag=${encodeURIComponent(tag._id)}`)}
                   className={cn(
-                    "px-3 py-1.5 rounded-lg text-sm font-medium",
+                    "px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium",
                     "bg-purple-100 dark:bg-purple-900/30",
                     "text-purple-700 dark:text-purple-300",
                     "hover:bg-purple-200 dark:hover:bg-purple-900/50",
@@ -264,14 +264,14 @@ const SocialFeed = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.4 }}
         >
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
-              <RectangleStackIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-1 sm:mb-2">
+              <RectangleStackIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
               All Content
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">Latest saves from your network</p>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Latest saves from your network</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {feed.map((item, idx) => (
               <SocialFeedCard key={item._id} item={item} index={idx} />
             ))}
@@ -299,35 +299,37 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
       transition={{ delay: index * 0.03, duration: 0.3 }}
       className={cn(
         "glass border border-purple-200/50 dark:border-purple-800/30",
-        "rounded-2xl shadow-lg hover:shadow-xl",
+        "rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl",
         "transition-all duration-300 overflow-hidden",
-        "hover:scale-[1.02]"
+        "hover:scale-[1.01] sm:hover:scale-[1.02]"
       )}
     >
       {/* User Header */}
-      <div className="p-4 border-b border-gray-200/50 dark:border-gray-800/50">
-        <div className="flex items-center justify-between">
+      <div className="p-3 sm:p-4 border-b border-gray-200/50 dark:border-gray-800/50">
+        <div className="flex items-center justify-between gap-2">
           <button
             onClick={() => navigate(`/user/${item.userDetails?._id}`)}
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity min-w-0 flex-1"
           >
             <Avatar 
               profilePic={item.userDetails?.profilePic}
               username={item.userDetails?.username || "User"} 
+              className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0"
             />
-            <div>
-              <p className="font-semibold text-gray-900 dark:text-white">
+            <div className="min-w-0">
+              <p className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white truncate">
                 @{item.userDetails?.username || "unknown"}
               </p>
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <CalendarIcon className="w-3.5 h-3.5" />
-                <span>{createdDate}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                <CalendarIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                <span className="truncate">{createdDate}</span>
               </div>
             </div>
           </button>
           <FollowButton 
             userId={item.userDetails?._id || ""} 
             username={item.userDetails?.username || ""}
+            compact
           />
         </div>
       </div>
@@ -338,20 +340,20 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
       </div>
 
       {/* Content Section */}
-      <div className="p-5 space-y-4">
+      <div className="p-3 sm:p-5 space-y-3 sm:space-y-4">
         {/* Title and Platform Badge */}
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           <div className="flex items-start justify-between gap-2">
             {item.title && (
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 flex-1">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 dark:text-white line-clamp-2 flex-1">
                 {item.title}
               </h2>
             )}
             <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold text-white shadow-sm flex-shrink-0"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-xs font-semibold text-white shadow-sm flex-shrink-0"
               style={{ backgroundColor: platformMeta.color }}
             >
-              <span>{platformMeta.icon}</span>
+              <span className="hidden sm:inline">{platformMeta.icon}</span>
               <span>{item.type}</span>
             </span>
           </div>
@@ -361,7 +363,7 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
             href={item.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors line-clamp-1 block"
+            className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors line-clamp-1 block"
           >
             {new URL(item.link).hostname.replace('www.', '')}
           </a>
@@ -369,7 +371,7 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
 
         {/* Tags */}
         {item.tags && item.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
             {item.tags.slice(0, 3).map((tag) => {
               const tagName = typeof tag === 'string' ? tag : tag.name;
               const tagId = typeof tag === 'object' && tag._id ? tag._id : tagName;
@@ -378,7 +380,7 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
                   key={tagId}
                   onClick={() => navigate(`/explore?tag=${encodeURIComponent(tagName)}`)}
                   className={cn(
-                    "px-2 py-1 rounded-md text-xs font-medium",
+                    "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md text-[10px] sm:text-xs font-medium",
                     "bg-purple-100 dark:bg-purple-900/30",
                     "text-purple-700 dark:text-purple-300",
                     "hover:bg-purple-200 dark:hover:bg-purple-900/50",
@@ -391,7 +393,7 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
               );
             })}
             {item.tags.length > 3 && (
-              <span className="px-2 py-1 text-gray-500 dark:text-gray-400 text-xs">
+              <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-gray-500 dark:text-gray-400 text-[10px] sm:text-xs">
                 +{item.tags.length - 3}
               </span>
             )}
@@ -405,7 +407,7 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
           rel="noopener noreferrer"
           className={cn(
             "w-full inline-flex items-center justify-center gap-2",
-            "px-4 py-2.5 rounded-xl font-medium text-sm",
+            "px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm",
             "bg-gradient-to-r from-purple-600 to-pink-600",
             "hover:from-purple-700 hover:to-pink-700",
             "text-white transition-all duration-200",
@@ -413,7 +415,7 @@ const SocialFeedCard = memo(({ item, index }: { item: SocialFeedContent; index: 
           )}
         >
           View Content
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
         </a>

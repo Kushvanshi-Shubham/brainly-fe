@@ -116,61 +116,61 @@ export default function UserProfile() {
   if (!profile) return null;
 
   return (
-    <div className="px-4 py-8">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="px-3 sm:px-4 py-4 sm:py-8">
+      <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-4 sm:p-8 mb-4 sm:mb-6"
         >
-          <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6">
             {/* Profile Picture */}
             <Avatar
               profilePic={profile.profilePic}
               username={profile.username}
-              size="2xl"
+              size="xl"
               showOnlineIndicator={false}
             />
 
             {/* User Info */}
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2 justify-center md:justify-start">
-                <UserIcon className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2 justify-center md:justify-start">
+                <UserIcon className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 dark:text-purple-400" />
                 {profile.username}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mb-2">{profile.email}</p>
-              <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2 justify-center md:justify-start">
-                <CalendarIcon className="w-5 h-5" />
-                Member since {new Date(profile.joinedAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long' })}
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-2 hidden sm:block">{profile.email}</p>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 flex items-center gap-2 justify-center md:justify-start">
+                <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Member since </span>{new Date(profile.joinedAt).toLocaleDateString("en-US", { year: 'numeric', month: 'short' })}
               </p>
               {profile.bio && (
-                <p className="text-gray-700 dark:text-gray-300 mt-3 italic">"{profile.bio}"</p>
+                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mt-2 sm:mt-3 italic line-clamp-2 sm:line-clamp-none">"{profile.bio}"</p>
               )}
             </div>
 
             {/* Follow Button */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 w-full sm:w-auto">
               <FollowButton 
                 userId={userId!} 
                 username={profile.username}
-                className="min-w-[120px]"
+                className="w-full sm:min-w-[120px]"
               />
             </div>
           </div>
         </motion.div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6"
           >
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Saves</p>
-              <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">
+              <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Saves</p>
+              <p className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 mt-1 sm:mt-2">
                 {profile.contentCount}
               </p>
             </div>
@@ -180,11 +180,11 @@ export default function UserProfile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6"
           >
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Tags</p>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+              <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Tags</p>
+              <p className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1 sm:mt-2">
                 {profile.totalTags}
               </p>
             </div>
@@ -194,12 +194,12 @@ export default function UserProfile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6 cursor-pointer hover:shadow-xl transition-shadow"
             onClick={() => navigate(`/user/${userId}/followers`)}
           >
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Followers</p>
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">
+              <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Followers</p>
+              <p className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mt-1 sm:mt-2">
                 {profile.followersCount}
               </p>
             </div>
@@ -209,12 +209,12 @@ export default function UserProfile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-3 sm:p-6 cursor-pointer hover:shadow-xl transition-shadow"
             onClick={() => navigate(`/user/${userId}/following`)}
           >
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Following</p>
-              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-2">
+              <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Following</p>
+              <p className="text-2xl sm:text-3xl font-bold text-orange-600 dark:text-orange-400 mt-1 sm:mt-2">
                 {profile.followingCount}
               </p>
             </div>
@@ -227,14 +227,14 @@ export default function UserProfile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-4 sm:p-6 mb-4 sm:mb-6"
           >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Content Types</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Content Types</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {profile.typeBreakdown.map((type) => (
-                <div key={type._id} className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">{type._id}</p>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
+                <div key={type._id} className="text-center p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 capitalize">{type._id}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
                     {type.count}
                   </p>
                 </div>
@@ -249,14 +249,14 @@ export default function UserProfile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-lg shadow-lg p-4 sm:p-6"
           >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Top Tags</h2>
-            <div className="flex flex-wrap gap-3">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Top Tags</h2>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {profile.topTags.map((tag) => (
                 <span
                   key={tag.name}
-                  className="px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-full text-xs sm:text-sm font-medium"
                 >
                   {tag.name} ({tag.count})
                 </span>

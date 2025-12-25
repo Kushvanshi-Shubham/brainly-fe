@@ -127,12 +127,12 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      whileHover={{ y: -6, scale: 1.01 }}
+      whileHover={{ y: -4, scale: 1.005 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={cn(
         "group relative overflow-hidden will-change-transform",
         "bg-white dark:bg-gray-800/90",
-        "rounded-2xl",
+        "rounded-xl sm:rounded-2xl",
         "border border-gray-200/80 dark:border-gray-700/50",
         "shadow-lg shadow-gray-200/50 dark:shadow-black/20",
         "hover:shadow-xl hover:shadow-purple-200/30 dark:hover:shadow-purple-900/20",
@@ -144,18 +144,18 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
       {/* Embed preview - Full width at top */}
-      <div className="w-full max-h-[600px] overflow-hidden">
+      <div className="w-full max-h-[300px] sm:max-h-[600px] overflow-hidden">
         <EmbedPreview url={link} type={type as ContentType} title={title} />
       </div>
 
       {/* Content section */}
-      <div className="relative p-5">
+      <div className="relative p-3 sm:p-5">
         {/* Header with platform badge and title */}
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl">{platformMeta.icon}</span>
+        <div className="mb-3 sm:mb-4">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+            <span className="text-xl sm:text-2xl">{platformMeta.icon}</span>
             <span 
-              className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-sm"
+              className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2 sm:px-3 py-1 sm:py-1.5 rounded-full backdrop-blur-sm"
               style={{ 
                 backgroundColor: platformMeta.color + '15',
                 color: platformMeta.color,
@@ -165,10 +165,10 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
               {type}
             </span>
             {isFavorite && (
-              <span className="text-yellow-500 text-lg animate-pulse">★</span>
+              <span className="text-yellow-500 text-base sm:text-lg animate-pulse">★</span>
             )}
             {isArchived && (
-              <span className="text-purple-500 text-lg">📦</span>
+              <span className="text-purple-500 text-base sm:text-lg">📦</span>
             )}
           </div>
 
@@ -177,7 +177,7 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
             <button
               onClick={() => navigate(`/user/${userId._id}`)}
               className={cn(
-                "text-sm font-medium mb-2 transition-all duration-200",
+                "text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 transition-all duration-200",
                 "text-gray-500 dark:text-gray-400",
                 "hover:text-purple-600 dark:hover:text-purple-400",
                 "hover:underline underline-offset-2"
@@ -187,7 +187,7 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
             </button>
           )}
 
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2 line-clamp-2">
+          <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white leading-snug mb-1.5 sm:mb-2 line-clamp-2">
             {title}
           </h3>
           
@@ -196,7 +196,7 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
             target="_blank" 
             rel="noopener noreferrer"
             className={cn(
-              "text-sm line-clamp-1 transition-all duration-200",
+              "text-xs sm:text-sm line-clamp-1 transition-all duration-200",
               "text-gray-400 dark:text-gray-500",
               "hover:text-purple-600 dark:hover:text-purple-400",
               "hover:underline underline-offset-2"
@@ -209,12 +209,12 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
         {/* Notes section */}
         {notes && (
           <div className={cn(
-            "mb-4 p-4 rounded-xl",
+            "mb-3 sm:mb-4 p-3 sm:p-4 rounded-lg sm:rounded-xl",
             "bg-gradient-to-br from-purple-50 to-pink-50",
             "dark:from-purple-900/20 dark:to-pink-900/20",
             "border border-purple-200/50 dark:border-purple-800/30"
           )}>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
               <span className="font-semibold text-purple-600 dark:text-purple-400">💭 Note:</span> {notes}
             </p>
           </div>
@@ -222,7 +222,7 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
 
         {/* Tags */}
         {content.tags && content.tags.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2">
+          <div className="mb-3 sm:mb-4 flex flex-wrap gap-1.5 sm:gap-2">
             {content.tags.slice(0, isExpanded ? content.tags.length : 5).map((tag, index) => {
               const tagName = typeof tag === 'string' ? tag : tag.name;
               return (
@@ -230,7 +230,7 @@ const CardComponent = ({ content, refresh, collectionId, onContentRemoved }: Car
                   key={`${tagName}-${index}`}
                   onClick={() => navigate(`/explore?tag=${encodeURIComponent(tagName)}`)}
                   className={cn(
-                    "px-3 py-1.5 text-xs font-semibold rounded-full",
+                    "px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold rounded-full",
                     "bg-gradient-to-r from-purple-100 to-pink-100",
                     "dark:from-purple-900/30 dark:to-pink-900/30",
                     "text-purple-700 dark:text-purple-300",

@@ -15,7 +15,7 @@ export const LandingNavbar = () => (
   >
     <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-purple-600 dark:text-purple-400">
       <Logo className="w-8 h-8" />
-      Brainly
+      Braintox
     </Link>
     <div className="flex items-center space-x-2">
       <Link to="/login">

@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useContent } from '../hooks/useContent';
 import { Navbar } from '../components/NavBar';
 import { Sidebar } from '../components/ui/Sidebar';
+import { MobileNavigation } from '../components/ui/MobileNavigation';
 import { Spinner } from '../components/ui/Spinner';
 import { cn } from '../utlis/cn';
 
@@ -24,9 +25,10 @@ export const MainLayout = () => {
 
   const showSidebar = SIDEBAR_PAGES.has(location.pathname);
   
+  // Only apply margin on desktop
   let marginLeft = '';
   if (showSidebar) {
-    marginLeft = collapsed ? 'ml-20' : 'ml-64';
+    marginLeft = collapsed ? 'md:ml-20' : 'md:ml-64';
   }
 
   return (
@@ -35,11 +37,17 @@ export const MainLayout = () => {
       "bg-gradient-to-br from-gray-50 via-gray-50 to-purple-50/30",
       "dark:from-gray-900 dark:via-gray-900 dark:to-purple-950/20"
     )}>
-      {showSidebar && <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />}
+      {/* Desktop Sidebar - Hidden on mobile */}
+      {showSidebar && (
+        <div className="hidden md:block">
+          <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+        </div>
+      )}
       
       <div className={cn(
         "flex flex-1 flex-col transition-all duration-300 ease-out",
-        marginLeft
+        marginLeft,
+        "pb-20 md:pb-0" // Add padding for mobile bottom nav
       )}>
         <Navbar onAddContent={() => setModalOpen(true)} />
         <main className="flex-1 relative">
@@ -50,6 +58,9 @@ export const MainLayout = () => {
           </div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileNavigation onAddContent={() => setModalOpen(true)} />
       
       {modalOpen && (
         <Suspense fallback={

@@ -19,7 +19,7 @@ export const Footer = () => {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
                 <span className="text-white font-bold text-lg">B</span>
               </div>
-              <span className="text-xl font-bold gradient-text">Brainly</span>
+              <span className="text-xl font-bold gradient-text">Braintox</span>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Your personal knowledge management system. Save, organize, and share everything that matters.
@@ -83,7 +83,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-gray-200/50 dark:border-gray-800/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-500 dark:text-gray-500">
-            © {new Date().getFullYear()} Brainly. All rights reserved.
+            © {new Date().getFullYear()} Braintox. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm text-gray-500 dark:text-gray-500">
             <Link to="/status" className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Status</Link>

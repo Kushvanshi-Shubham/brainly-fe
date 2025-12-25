@@ -37,7 +37,7 @@ const SidebarComponent = ({ collapsed, setCollapsed }: SidebarProps) => {
           </div>
           {!collapsed && (
             <span className="text-xl font-bold gradient-text whitespace-nowrap">
-              Brainly
+              Braintox
             </span>
           )}
         </Link>
@@ -121,7 +121,7 @@ const SidebarComponent = ({ collapsed, setCollapsed }: SidebarProps) => {
         {!collapsed && (
           <div className="pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
             <p className="text-center text-xs text-gray-400 dark:text-gray-500">
-              © {new Date().getFullYear()} Brainly
+              © {new Date().getFullYear()} Braintox
             </p>
           </div>
         )}
