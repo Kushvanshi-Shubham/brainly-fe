@@ -15,6 +15,7 @@ import Profile from "./pages/Auth/Profile";
 import UserProfile from "./pages/Auth/UserProfile";
 import Discover from "./pages/Discover";
 import { ActivityFeed } from "./pages/Activity";
+import KnowledgeGraph from "./pages/KnowledgeGraph";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { BackendStatusNotification } from "./components/BackendStatusNotification";
 
@@ -49,6 +50,7 @@ function App() {
           <Route path="/collections/:id" element={<CollectionDetail />} />
           <Route path="/discover" element={<Discover />} />
           <Route path="/activity" element={<ActivityFeed />} />
+          <Route path="/graph" element={<KnowledgeGraph />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/user/:userId" element={<UserProfile />} />
         </Route>

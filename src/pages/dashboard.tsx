@@ -6,6 +6,64 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { FilterSort } from "../components/ui/FilterSort";
 import { ContentGridSkeleton } from "../components/ui/Skeleton";
 
+// Local alias that works with both Content and ContentItem shapes
+type ExportableContent = {
+  _id: string;
+  title: string;
+  link: string;
+  type: string;
+  tags?: Array<string | { name: string }>;
+  createdAt?: string;
+  notes?: string;
+};
+
+// ── Export to Markdown ────────────────────────────────────────────────────────
+function exportToMarkdown(contents: ExportableContent[]) {
+  const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+  // Group by first tag (or "Uncategorised")
+  const groups = new Map<string, ExportableContent[]>();
+  for (const c of contents) {
+    const tag = c.tags?.[0] ? (typeof c.tags[0] === "string" ? c.tags[0] : c.tags[0].name) : "Uncategorised";
+    if (!groups.has(tag)) groups.set(tag, []);
+    groups.get(tag)!.push(c);
+  }
+
+  const lines: string[] = [
+    `# 🧠 My Knowledge Base`,
+    ``,
+    `> Exported from Braintox on ${date}`,
+    `> ${contents.length} saved items`,
+    ``,
+  ];
+
+  for (const [tag, items] of [...groups.entries()].sort()) {
+    lines.push(`## #${tag}`, ``);
+    for (const item of items) {
+      lines.push(`### [${item.title}](${item.link})`);
+      lines.push(`- **Type:** ${item.type}`);
+      if (item.tags && item.tags.length > 0) {
+  const tagNames = item.tags.map(t => `#${typeof t === "string" ? t : t.name}`).join(" ");
+        lines.push(`- **Tags:** ${tagNames}`);
+      }
+      if (item.createdAt) {
+        lines.push(`- **Saved:** ${new Date(item.createdAt).toLocaleDateString()}`);
+      }
+      if (item.notes) {
+        lines.push(`- **Notes:** ${item.notes}`);
+      }
+      lines.push(``);
+    }
+  }
+
+  const blob = new Blob([lines.join("\n")], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `braintox-export-${new Date().toISOString().slice(0, 10)}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function Dashboard() {
   const [search, setSearch] = useState("");
@@ -72,18 +130,32 @@ function Dashboard() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Search Bar */}
-        <div className="mb-4 sm:mb-6">
-          <input
-            type="text"
-            placeholder="Search your saved content..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none text-sm sm:text-base"
-          />
-          <p className="mt-1 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
-            Search through your personal saved content only
-          </p>
+        {/* Search Bar + Export */}
+        <div className="mb-4 sm:mb-6 flex gap-3 items-start">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Search your saved content..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none text-sm sm:text-base"
+            />
+            <p className="mt-1 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+              Search through your personal saved content only
+            </p>
+          </div>
+          {contents.length > 0 && (
+            <button
+              onClick={() => exportToMarkdown(filteredContents)}
+              title="Export visible content as Markdown"
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all text-sm font-medium whitespace-nowrap"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              </svg>
+              <span className="hidden sm:inline">Export .md</span>
+            </button>
+          )}
         </div>
 
         {/* Tag Filter */}

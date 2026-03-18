@@ -109,6 +109,23 @@ const SidebarComponent = ({ collapsed, setCollapsed }: SidebarProps) => {
           collapsed={collapsed}
         />
         <SidebarItem
+          text="Graph"
+          icon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <circle cx="5"  cy="12" r="2" fill="currentColor" stroke="none" />
+              <circle cx="19" cy="5"  r="2" fill="currentColor" stroke="none" />
+              <circle cx="19" cy="19" r="2" fill="currentColor" stroke="none" />
+              <circle cx="12" cy="8"  r="2" fill="currentColor" stroke="none" />
+              <line x1="5" y1="12" x2="12" y2="8"  strokeWidth={1.5} />
+              <line x1="12" y1="8" x2="19" y2="5"  strokeWidth={1.5} />
+              <line x1="12" y1="8" x2="19" y2="19" strokeWidth={1.5} />
+              <line x1="5"  y1="12" x2="19" y2="19" strokeWidth={1.5} />
+            </svg>
+          }
+          to="/graph"
+          collapsed={collapsed}
+        />
+        <SidebarItem
           text="Profile"
           icon={<UserIcon className="w-5 h-5" />}
           to="/profile"
