@@ -78,6 +78,12 @@ const NavbarComponent: React.FC<NavbarProps> = ({ onAddContent }) => {
             <NavLink to="/explore" className={navLinkClass}>
               Explore
             </NavLink>
+            <NavLink to="/import" className={navLinkClass}>
+              Import
+            </NavLink>
+            <NavLink to="/analytics" className={navLinkClass}>
+              Analytics
+            </NavLink>
           </nav>
         </div>
 
@@ -226,6 +232,13 @@ const NavbarComponent: React.FC<NavbarProps> = ({ onAddContent }) => {
               onClick={() => setMobileMenuOpen(false)}
             >
               Profile
+            </NavLink>
+            <NavLink 
+              to="/import" 
+              className={mobileNavLinkClass}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Import Bookmarks
             </NavLink>
           </nav>
         </div>

@@ -10,9 +10,23 @@
     <meta name="theme-color" content="#1f2937" media="(prefers-color-scheme: dark)" />
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Braintox - Organize, save, and discover content from across the web. Build your personal knowledge base with collections, tags, and smart discovery." />
-    <meta name="keywords" content="content management, bookmarks, knowledge base, collections, organize content" />
-    <title>Braintox - Your Personal Knowledge Base</title>
+    <meta name="description" content="Braintox - Save, organize, and discover content from across the web. AI-powered tagging, knowledge graph, and social bookmarking." />
+    <meta name="keywords" content="content management, bookmarks, knowledge base, collections, organize content, AI tagging" />
+    <title>Braintox - Your AI-Powered Knowledge Network</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Braintox" />
+    <meta property="og:title" content="Braintox — Your AI-Powered Knowledge Network" />
+    <meta property="og:description" content="Save, organize, and discover content from across the web. AI-powered tagging, knowledge graph, and social bookmarking." />
+    <meta property="og:url" content="https://braintox.vercel.app" />
+    <meta property="og:image" content="https://braintox.vercel.app/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Braintox — Your AI-Powered Knowledge Network" />
+    <meta name="twitter:description" content="Save, organize, and discover content from across the web. AI-powered tagging, knowledge graph, and social bookmarking." />
+    <meta name="twitter:image" content="https://braintox.vercel.app/og-image.png" />
     
     <!-- Performance Hints -->
     <link rel="preconnect" href="https://platform.twitter.com" crossorigin />
@@ -23,9 +37,22 @@
     <!-- Social Media Embed Scripts (Async loaded) -->
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script async src="https://www.instagram.com/embed.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="preconnect" href="https://accounts.google.com" crossorigin />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>

@@ -5,6 +5,7 @@ import { Navbar } from '../components/NavBar';
 import { Sidebar } from '../components/ui/Sidebar';
 import { MobileNavigation } from '../components/ui/MobileNavigation';
 import { Spinner } from '../components/ui/Spinner';
+import { EmailVerificationBanner } from '../components/EmailVerificationBanner';
 import { cn } from '../utlis/cn';
 
 // Lazy load heavy modal components for better initial load
@@ -50,6 +51,7 @@ export const MainLayout = () => {
         "pb-20 md:pb-0" // Add padding for mobile bottom nav
       )}>
         <Navbar onAddContent={() => setModalOpen(true)} />
+        <EmailVerificationBanner />
         <main className="flex-1 relative">
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-purple-500/5 pointer-events-none" />

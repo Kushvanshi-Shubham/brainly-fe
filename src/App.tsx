@@ -2,6 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 import { Login } from "./pages/Auth/Login";
 import { SignUp } from "./pages/Auth/SignUp";
+import { ForgotPassword } from "./pages/Auth/ForgotPassword";
+import { ResetPassword } from "./pages/Auth/ResetPassword";
+import { VerifyEmail } from "./pages/Auth/VerifyEmail";
 import { LandingPage } from "./pages/Landingpage";
 import { ProtectedRoute } from "./context/ProtectedRoute";
 import { useTheme } from "./hooks/useThemes";
@@ -18,6 +21,12 @@ import { ActivityFeed } from "./pages/Activity";
 import KnowledgeGraph from "./pages/KnowledgeGraph";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { BackendStatusNotification } from "./components/BackendStatusNotification";
+import ImportBookmarks from "./pages/ImportBookmarks";
+import Analytics from "./pages/Analytics";
+import PublicProfile from "./pages/PublicProfile";
+import ApiKeys from "./pages/Settings/ApiKeys";
+import ExportData from "./pages/ExportData";
+import PublicCollection from "./pages/PublicCollection";
 
 
 
@@ -34,6 +43,11 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/@:username" element={<PublicProfile />} />
+        <Route path="/collection/:id/public" element={<PublicCollection />} />
 
         {/* Protected routes with MainLayout (includes Navbar with Add Content button) */}
         <Route
@@ -51,6 +65,10 @@ function App() {
           <Route path="/discover" element={<Discover />} />
           <Route path="/activity" element={<ActivityFeed />} />
           <Route path="/graph" element={<KnowledgeGraph />} />
+          <Route path="/import" element={<ImportBookmarks />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/settings/api-keys" element={<ApiKeys />} />
+          <Route path="/export" element={<ExportData />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/user/:userId" element={<UserProfile />} />
         </Route>

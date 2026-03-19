@@ -1,12 +1,10 @@
 import { LandingNavbar, Footer, IconMarquee } from "../Landing";
+import { SEOHead } from "../components/SEOHead";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { cn } from "../utlis/cn";
 import {
-  UserGroupIcon,
-  LinkIcon,
-  FolderIcon,
   BookmarkIcon,
   TagIcon,
   MagnifyingGlassIcon,
@@ -16,12 +14,12 @@ import {
   CloudArrowUpIcon,
   Squares2X2Icon,
   GlobeAltIcon,
-  StarIcon,
   ArrowDownIcon,
   PlayCircleIcon,
-  PaintBrushIcon,
-  CodeBracketIcon,
-  MicrophoneIcon
+  FolderIcon,
+  BoltIcon,
+  CpuChipIcon,
+  ShareIcon
 } from '@heroicons/react/24/outline';
 
 export function LandingPage() {
@@ -36,6 +34,11 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+      <SEOHead
+        title="Your AI-Powered Knowledge Network"
+        description="Save, organize, and discover content from across the web. AI-powered tagging, knowledge graph, and social bookmarking — free forever."
+        path="/"
+      />
       <LandingNavbar />
       
       {/* Enhanced Hero Section */}
@@ -126,17 +129,30 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Why Braintox Section */}
       <section className="py-20 bg-white dark:bg-gray-950 border-y border-gray-200/50 dark:border-gray-800/50">
         <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Why <span className="gradient-text">Braintox</span>?
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              More than a bookmark manager — an AI-powered knowledge network that helps you see connections you'd otherwise miss.
+            </p>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { number: "50K+", label: "Active Users", icon: UserGroupIcon },
-              { number: "2M+", label: "Links Saved", icon: LinkIcon },
-              { number: "100K+", label: "Collections Created", icon: FolderIcon }
-            ].map((stat, index) => (
+              { icon: CpuChipIcon, title: "AI-Powered Intelligence", description: "Auto-tags, summarizes, and connects your saved content using AI." },
+              { icon: ShareIcon, title: "Knowledge Graph", description: "Visualize how your ideas connect in an interactive graph view." },
+              { icon: BoltIcon, title: "Lightning Fast", description: "Save anything from the web in one click with our browser extension." }
+            ].map((item, index) => (
               <motion.div
-                key={stat.label}
+                key={item.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -148,9 +164,9 @@ export function LandingPage() {
                   "border border-purple-200/50 dark:border-purple-800/30"
                 )}
               >
-                <stat.icon className="w-12 h-12 mx-auto mb-3 text-purple-600 dark:text-purple-400" />
-                <div className="text-4xl font-bold gradient-text mb-2">{stat.number}</div>
-                <div className="text-gray-600 dark:text-gray-400">{stat.label}</div>
+                <item.icon className="w-12 h-12 mx-auto mb-4 text-purple-600 dark:text-purple-400" />
+                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{item.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400">{item.description}</p>
               </motion.div>
             ))}
           </div>
@@ -324,86 +340,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/10 dark:to-pink-950/10">
-        <div className="max-w-6xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Loved by <span className="gradient-text">knowledge workers</span>
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400">
-              See what our users have to say
-            </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Sarah Chen",
-                role: "Product Designer",
-                content: "Braintox has completely changed how I organize my design inspiration. I can finally find that perfect reference when I need it!",
-                avatar: PaintBrushIcon,
-                rating: 5
-              },
-              {
-                name: "Marcus Rodriguez",
-                role: "Software Engineer",
-                content: "As a developer, I save tons of code snippets and documentation. Braintox makes it so easy to categorize and retrieve everything.",
-                avatar: CodeBracketIcon,
-                rating: 5
-              },
-              {
-                name: "Emily Taylor",
-                role: "Content Creator",
-                content: "The collections feature is perfect for content research. I can share curated resources with my team effortlessly.",
-                avatar: MicrophoneIcon,
-                rating: 5
-              }
-            ].map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className={cn(
-                  "p-6 rounded-2xl",
-                  "bg-white dark:bg-gray-800",
-                  "border border-gray-200/50 dark:border-gray-700/50",
-                  "shadow-lg"
-                )}
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <StarIcon key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                  ))}
-                </div>
-                <p className="text-gray-700 dark:text-gray-300 mb-6 italic">
-                  "{testimonial.content}"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <testimonial.avatar className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {testimonial.role}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Integrations/Platforms */}
       <section className="py-20 bg-white dark:bg-gray-950">
@@ -458,7 +395,7 @@ export function LandingPage() {
               Ready to build your digital brain?
             </h2>
             <p className="text-xl mb-8 text-white/90">
-              Join thousands of users who never lose track of important content
+              Start organizing your digital knowledge today — completely free.
             </p>
             <button
               onClick={() => navigate("/signup")}
